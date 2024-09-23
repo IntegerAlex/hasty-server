@@ -1,3 +1,4 @@
+const { sourceMapsEnabled } = require('process');
 const { httpParser } = require('../lib/httpParser.js');
 const net = require('net'); 
 
@@ -11,16 +12,33 @@ function handler(socket,context){
          httpParser(buff) // Parse the HTTP request
              .then((data) => {
                 //console.log("test : "+JSON.stringify(data)); // Log the parsed data
-		     if (context.routes.some(obj => obj.method === data.method && obj.path === data.path)) {
-    
+		pathController(data,context,socket)    
 				
-}
-		socket.write('HTTP/1.1 404 \nContent-Type: text/plain\n\nNOT FOUND\n'); // Send a response
-		socket.end(); // Close the connection
+		//
+		//socket.write('HTTP/1.1 404 \nContent-Type: text/plain\n\nNOT FOUND\n'); // Send a response
+		//socket.end(); // Close the connection
              });
      });
 
 }
+
+
+
+function pathController(data,context, socket) {
+    const path = data.path;
+    console.log("pathController: " + path);
+
+    // Check if the path exists in the context.routes
+    const route = context.routes.find(route => route.path === path);
+    
+    if (route) {
+        route.callback(data, socket);
+    } else {
+        return "404";
+    }
+}
+
+
 
 class  Server  {
 	socket;  	
@@ -47,7 +65,7 @@ class  RouteHandler extends Server{
 		route.path  =  object.path;
 		route.method=method;
 		this.routes.push(route)
-		//console.log(this.routes)
+		console.log(this.routes)
 	}
 
 
@@ -75,6 +93,3 @@ module.exports = RouteHandler
 //})
 
   
-//routeHandler.get("/",()=>{
-	//console.log("get / ")
-//})
