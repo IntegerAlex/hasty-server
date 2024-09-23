@@ -1,0 +1,19 @@
+{
+  "name": "hasty-server",
+  "version": "0.0.2",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+  },
+  "keywords": ["http", "server", "hasty","express","fastify"],
+  "author": "Akshat Kotpalliwar",
+   "repository": {
+    "type": "git",
+    "url": "https://github.com/IntegerAlex/hasty-server.git"
+  },
+  "license": "GPL-3.0",
+  "description": ""
+}
