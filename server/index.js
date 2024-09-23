@@ -1,27 +1,31 @@
 const { httpParser } = require('../lib/httpParser.js');
 const net = require('net'); 
 
-function  getSocket(callback){
-	return net.createServer(callback)
+function  getSocket(callback,context){
+	return net.createServer(Socket=>callback(Socket,context))
 }
 
-function handler(socket){
+function handler(socket,context){
 	 socket.on('data', (data) => {
          const buff = data.toString(); // Convert buffer data to string
          httpParser(buff) // Parse the HTTP request
              .then((data) => {
-                console.log("test : "+JSON.stringify(data)); // Log the parsed data
+                //console.log("test : "+JSON.stringify(data)); // Log the parsed data
+		     if (context.routes.some(obj => obj.method === data.method && obj.path === data.path)) {
+    
+				
+}
+		socket.write('HTTP/1.1 404 \nContent-Type: text/plain\n\nNOT FOUND\n'); // Send a response
+		socket.end(); // Close the connection
              });
      });
-        socket.write('HTTP/1.1 200 OK\nContent-Type: text/plain\n\nHello World\n'); // Send a response
-        socket.end(); // Close the connection
 
 }
 
 class  Server  {
 	socket;  	
 	constructor(){
-	this.socket = getSocket(handler);
+	this.socket = getSocket(handler,this);
 	this.routes= [] 
 	}
 
@@ -43,7 +47,7 @@ class  RouteHandler extends Server{
 		route.path  =  object.path;
 		route.method=method;
 		this.routes.push(route)
-		console.log(this.routes)
+		//console.log(this.routes)
 	}
 
 
@@ -56,8 +60,9 @@ class  RouteHandler extends Server{
 	
 }
 
+module.exports = RouteHandler
 
-const  routeHandler  = new RouteHandler()
+//const  routeHandler  = new RouteHandler()
 //routeHandler.get({callback:()=>{
 //	console.log("we are getting started")
 //},path:"/"})
@@ -65,9 +70,11 @@ const  routeHandler  = new RouteHandler()
 //server.listen(8080,()=>{V
 //	console.log("server started");
 //})
-routeHandler.listen(8080,()=>{
-	console.log("server started")
-})
+//routeHandler.listen(8080,()=>{
+	//console.log("server started")
+//})
 
   
-routeHandler.get("/",()=>{})
+//routeHandler.get("/",()=>{
+	//console.log("get / ")
+//})
