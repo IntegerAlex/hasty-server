@@ -1,6 +1,6 @@
 {
   "name": "hasty-server",
-  "version": "0.5.2",
+  "version": "0.5.1",
   "main": "index.js",
   "directories": {
     "lib": "lib",
@@ -15,5 +15,5 @@
     "url": "https://github.com/IntegerAlex/hasty-server.git"
   },
   "license": "GPL-3.0",
-  "description": "A  Blazing fast simple http server for node.js ",
+  "description": "A  Blazing fast simple http server for node.js"
 }

@@ -1,4 +1,3 @@
-const { sourceMapsEnabled } = require('process');
 const { httpParser } = require('../lib/httpParser.js');
 const net = require('net'); 
 
@@ -8,11 +7,22 @@ function  getSocket(callback,context){
 
 function handler(socket,context){
 	 socket.on('data', (data) => {
+	const res = {
+        send: ( body) => {
+            // Send the response
+	socket.write(`HTTP/1.1 200  OK\n\n${body}`); // Send a response
+            socket.end(); // End the connection
+        },
+	sendStatus: (statusCode) => {
+		socket.write(`HTTP/1.1 ${statusCode}\n\n`);
+		socket.end();
+	}
+    };
          const buff = data.toString(); // Convert buffer data to string
          httpParser(buff) // Parse the HTTP request
              .then((data) => {
                 //console.log("test : "+JSON.stringify(data)); // Log the parsed data
-		pathController(data,context,socket)    
+		pathController(data,context,res)    
 				
 		//
 		//socket.write('HTTP/1.1 404 \nContent-Type: text/plain\n\nNOT FOUND\n'); // Send a response
@@ -52,7 +62,7 @@ class  Server  {
 	}
 }
 
-class  RouteHandler extends Server{
+class  Hasty extends Server{
 	 
 	constructor(){
 		super()
@@ -78,7 +88,7 @@ class  RouteHandler extends Server{
 	
 }
 
-module.exports = RouteHandler
+module.exports = Hasty
 
 //const  routeHandler  = new RouteHandler()
 //routeHandler.get({callback:()=>{
