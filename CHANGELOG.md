@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.2] - 2024-09-29
+### Fixed
+- Fixed Issue of same path but different methods not being handled correctly.
+- Fixed Issue of `res.send()` not sending the correct response.
+
+### Added
+- Added support for handling multiple routes with the same path but different methods.
+- Created new Response class to handle response sending.
 
 ## [0.5.1] - 2024-09-29
 ### Fixed

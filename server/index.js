@@ -1,32 +1,20 @@
-const { httpParser } = require('../lib/httpParser.js');
-const net = require('net'); 
-
+const { httpParser } = require('../lib/httpParser.js'); // Import the httpParser function from the httpParser.js file
+const net = require('net');// Import the net module from Node.JS
+const  Response = require('./response.js' ); // Import the response object
+const { warn } = require('console');
 function  getSocket(callback,context){
 	return net.createServer(Socket=>callback(Socket,context))
 }
 
 function handler(socket,context){
 	 socket.on('data', (data) => {
-	const res = {
-        send: ( body) => {
-            // Send the response
-	socket.write(`HTTP/1.1 200  OK\n\n${body}`); // Send a response
-            socket.end(); // End the connection
-        },
-	sendStatus: (statusCode) => {
-		socket.write(`HTTP/1.1 ${statusCode}\n\n`);
-		socket.end();
-	}
-    };
+		const  res =  new Response(socket)
          const buff = data.toString(); // Convert buffer data to string
          httpParser(buff) // Parse the HTTP request
              .then((data) => {
                 //console.log("test : "+JSON.stringify(data)); // Log the parsed data
 		pathController(data,context,res)    
-				
-		//
-		//socket.write('HTTP/1.1 404 \nContent-Type: text/plain\n\nNOT FOUND\n'); // Send a response
-		//socket.end(); // Close the connection
+			
              });
      });
 
@@ -36,15 +24,16 @@ function handler(socket,context){
 
 function pathController(data,context, socket) {
     const path = data.path;
+const  method = data.method
     console.log("pathController: " + path);
 
     // Check if the path exists in the context.routes
     const route = context.routes.find(route => route.path === path);
     
-    if (route) {
+    if (route && route.method === method) {
         route.callback(data, socket);
     } else {
-        return "404";
+        socket.sendStatus(404);
     }
 }
 
