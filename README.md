@@ -7,7 +7,7 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 - [Installation](#installation)
 - [Usage](#usage)
 - [CHANGELOG](CHANGELOG.md)
-- [LICENSE](LICENSE.md)
+- [LICENSE](LICENSE.)
 
 
 ### Note
