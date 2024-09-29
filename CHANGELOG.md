@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.3] - 2024-09-29
+### Fixed
+- Fixed the issue of Npm main entry point not being set correctly.
+
 ## [0.5.2] - 2024-09-29
 ### Fixed
 - Fixed Issue of same path but different methods not being handled correctly.
