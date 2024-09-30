@@ -35,6 +35,12 @@ class Response {
             .map(key => `${key}: ${this.headers[key]}`)
             .join('\r\n');
     }
+
+	json(data){
+		data = JSON.stringify(data);
+		const  response = `HTTP/1.1 200 OK\nContent-Type: application/json\n\n${data}`;
+		this.send(response);
+	}
 }
 
 module.exports = Response;
