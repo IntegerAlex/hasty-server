@@ -28,7 +28,7 @@ const  method = data.method
     console.log("pathController: " + path);
 
     // Check if the path exists in the context.routes
-    const route = context.routes.find(route => route.path === path);
+    const route = context.routes.find(route => route.path === path && route.method === method);
     
     if (route && route.method === method) {
         route.callback(data, socket);
