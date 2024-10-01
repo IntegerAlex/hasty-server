@@ -55,7 +55,7 @@ class  Hasty extends Server{
 		this.socket.on('data', ()=> this.handler())
 	}
 
-	setRoute(method,object, status){
+	setRoute(method,object){
 		const route  =  new  Object();
 		route.callback = object.callback;
 		route.path  =  object.path;
