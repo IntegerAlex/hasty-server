@@ -1,6 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+##  [0.5.5] - 2024-10-02
+### Added
+- Added Chaining of response methods.
+- Added support for PUT, DELETE, PATCH, HEAD, OPTIONS HTTP methods. 
+- Added support for setting status code in response
+
+### Fixed
+- Fixed same path but different methods not being handled correctly.
+- Fixed issue of `res.json()` not sending the correct response.
+
+
 ## [0.5.4] - 2024-10-01
 ### Added 
 - Added support for sending  JSON responses using `res.json()` method.

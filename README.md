@@ -1,5 +1,10 @@
 # Hasty 
 
+
+![NPM Version](https://img.shields.io/npm/v/hasty-server)
+![NPM Downloads](https://img.shields.io/npm/d18m/hasty-server)
+![NPM License](https://img.shields.io/npm/l/hasty-server)
+
 Hasty server is a simple web framework to build webserver  in a simple way. It is inspired by [Express.js](https://expressjs.com/).
 Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 
@@ -7,6 +12,7 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Request Object](#request-object)
+- [Contributing](#contributing)
 - [CHANGELOG](CHANGELOG.md)
 - [LICENSE](LICENSE.md)
 
@@ -14,12 +20,6 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 ### Note
 
 This is a work in progress and not ready for production. It is just a fun project to learn how HTTP works under the hood.
-
-    -  Currently, It only supports GET and POST request.
-
-
-
-
 
 ### Installation
 ```bash
@@ -71,12 +71,24 @@ Some of the features in  `response object` are:
 - `status` : Set the status code of the response.
     - Usage: `res.status(200)`
     - Default status code is 200.
+    
+### Contributing
+
+If you would like to contribute to Hasty Server, you're welcome to:
+
+ - Fork the repository.
+ - Create a branch for your feature or bugfix.
+ - Submit a pull request.
+ - Please make sure to read the [contribution guidelines](COCONTRIBUTING.md) for more details.
+
+Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
 
 ### CHANGELOG
  
- Current version is 0.5.4.
- 
- It includes the new feature of  `json` method in the response object.
+It now Supports: PUT & DELETE HTTP methods and chaining of response methods.
+
+`res.status(200).send('Hello World')`
+
 
 For more information, see .
 [CHANGELOG](CHANGELOG.md)
