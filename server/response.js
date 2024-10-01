@@ -63,6 +63,7 @@ class Response {
             .map(key => `${key}: ${this.headers[key]}`)
             .join('\r\n');
     }
+
   
   // Send Json response
 	json(data) {
@@ -71,6 +72,11 @@ class Response {
 		this.socket.write(response); // Send the complete response
     this.socket.end(); // End the connection
 	}
+
+
+
+
+
 }
 
 module.exports = Response;
