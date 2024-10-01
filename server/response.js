@@ -38,11 +38,16 @@ class Response {
     }
 
 	json(data){
-        const statusCode = this.statusCode || 200;
-		data = JSON.stringify(data);
-		const  response = `HTTP/1.1 ${statusCode} OK\nContent-Type: application/json\n\n${data}`;
-		this.send(response);
-	}
+    const statusCode = this.statusCode || 200;
+    const headers = `Content-Type: application/json\n`;  // JSON content type header
+    const body = JSON.stringify(data);  // Convert the data to JSON
+    const response = `HTTP/1.1 ${statusCode} OK\n${headers}\n${body}`;
+    
+    this.socket.write(response);  // Send the complete response
+    this.socket.end();  // End the connection
+}
+
+	
 }
 
 module.exports = Response;
