@@ -24,17 +24,13 @@ function handler(socket,context){
 
 function pathController(data,context, socket) {
     const path = data.path;
-const  method = data.method
-    console.log("pathController: " + path);
+	const  method = data.method
+    console.log("pathController: " + method + ": " + path);
 
     // Check if the path exists in the context.routes
     const route = context.routes.find(route => route.path === path && route.method === method);
-    
-    if (route && route.method === method) {
-        route.callback(data, socket);
-    } else {
-        socket.sendStatus(404);
-    }
+    if (route) route.callback(data, socket); 
+	  else socket.sendStatus(404);
 }
 
 
@@ -55,14 +51,14 @@ class  Hasty extends Server{
 	 
 	constructor(){
 		super()
-		this.socket.on('data',()=>this.handler())
+		this.socket.on('data', ()=> this.handler())
 	}
 
 	setRoute(method,object){
 		const route  =  new  Object();
 		route.callback = object.callback;
 		route.path  =  object.path;
-		route.method=method;
+		route.method = method;
 		this.routes.push(route)
 		console.log(this.routes)
 	}
@@ -74,7 +70,22 @@ class  Hasty extends Server{
 	post(path,callback){
 		this.setRoute("POST",{callback:callback,path:path})
 	}
-	
+	put(path,callback){
+		this.setRoute("PUT",{callback:callback,path:path})
+	}
+	delete(path,callback){
+		this.setRoute("DELETE",{callback:callback,path:path})
+	}
+	patch(path,callback){
+		this.setRoute("PATCH",{callback:callback,path:path})
+	}
+	head(path,callback){
+		this.setRoute("HEAD",{callback:callback,path:path})
+	}
+	options(path,callback){
+		this.setRoute("OPTIONS",{callback:callback,path:path})
+	}
+
 }
 
 module.exports = Hasty
