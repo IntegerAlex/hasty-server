@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.4] - 2024-10-01
+### Added 
+- Added support for sending  JSON responses using `res.json()` method.
+
+
 ## [0.5.3] - 2024-09-29
 ### Fixed
 - Fixed the issue of Npm main entry point not being set correctly.
