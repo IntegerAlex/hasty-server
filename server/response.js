@@ -32,7 +32,7 @@ class Response {
         if (this.statusTextMap[code] === undefined) {
             throw new Error(`Invalid status code: ${code}`);
         }
-
+      
         this.statusCode = code;
         return this;
     }
@@ -63,12 +63,13 @@ class Response {
             .map(key => `${key}: ${this.headers[key]}`)
             .join('\r\n');
     }
-
+  
+  // Send Json response
 	json(data) {
 		data = JSON.stringify(data);
 		const  response = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\nContent-Type: application/json\n\n${data}`;
 		this.socket.write(response); // Send the complete response
-        this.socket.end(); // End the connection
+    this.socket.end(); // End the connection
 	}
 }
 
