@@ -4,7 +4,7 @@ class Response {
     }
 
     // Method to set status code
-    sendStatus(code) {
+    status(code) {
         this.statusCode = code;
         return this;
     }
@@ -17,7 +17,8 @@ class Response {
 
     // Method to send a response with a body
     send(body) {
-        const response = `HTTP/1.1 200 OK\n\n${body}`;
+        const statusCode = this.statusCode || 200;
+        const response = `HTTP/1.1 ${statusCode} OK\n\n${body}`;
         this.socket.write(response); // Send the complete response
         this.socket.end(); // End the connection
     }
@@ -37,8 +38,9 @@ class Response {
     }
 
 	json(data){
+        const statusCode = this.statusCode || 200;
 		data = JSON.stringify(data);
-		const  response = `HTTP/1.1 200 OK\nContent-Type: application/json\n\n${data}`;
+		const  response = `HTTP/1.1 ${statusCode} OK\nContent-Type: application/json\n\n${data}`;
 		this.send(response);
 	}
 }
