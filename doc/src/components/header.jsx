@@ -5,7 +5,7 @@ const Header = () => {
     <header className="bg-black text-white p-4 flex justify-between items-center md:px-20">
       <div className="flex items-center">
         <img
-          src="../../public/logo.png"
+          src="/logo.png"
           alt="Hasty Server Logo"
           className="w-20"
         />
