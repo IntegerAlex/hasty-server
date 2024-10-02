@@ -29,7 +29,7 @@ const QuickStart = () => {
       <SyntaxHighlighter language="bash" style={darcula} className="mb-6">
         npm install hasty-server
       </SyntaxHighlighter>
-      <Typography variant="h5" className="mt-10 mb-6 text-gray-800">
+      <Typography variant="h5" className="mt-10 mb-6 text-gray-100">
         Step 2: Create a New Server
       </Typography>
       <Typography
