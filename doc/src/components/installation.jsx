@@ -1,6 +1,6 @@
 import Typography from "./general/typography";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Use darcula for a darker theme
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Use darcula for a darker theme
 
 const Installation = () => {
   return (
@@ -11,60 +11,6 @@ const Installation = () => {
       >
         Installation
       </Typography>
-      <Typography variant="body1" className="mb-6 text-gray-300 leading-relaxed">
-        Hasty Server is a lightweight web framework for Node.js inspired by
-        Express.js. The key difference is that instead of using the http module
-        from Node.js, Hasty Server implements the HTTP protocol using raw TCP
-        sockets through the net library. This framework is designed for
-        developers who want to dive deeper into how HTTP works under the hood
-        and learn how to build their own web servers.
-      </Typography>
-      <Typography
-        variant="h5"
-        className="mt-10 mb-6 text-gray-100 text-center md:text-left"
-      >
-        Features
-      </Typography>
-      <ul className="list-disc list-inside mb-6 text-gray-300 leading-relaxed space-y-4">
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>Raw TCP Socket Handling:</strong> Implements the HTTP
-            protocol using the net library instead of Node.js&apos;s http
-            module.
-          </Typography>
-        </li>
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>Custom Request Parser:</strong> Parses HTTP requests,
-            including headers and bodies, allowing developers to see how HTTP is
-            structured.
-          </Typography>
-        </li>
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>Flexible Routing:</strong> Simple routing system to handle
-            different HTTP methods like GET and POST.
-          </Typography>
-        </li>
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>JSON Body Handling:</strong> Provides basic JSON body
-            parsing to work with API requests.
-          </Typography>
-        </li>
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>Easy to Extend:</strong> Allows developers to add more
-            features and customize how HTTP requests and responses are handled.
-          </Typography>
-        </li>
-        <li className="mb-2">
-          <Typography variant="body1">
-            <strong>Lightweight:</strong> Minimal dependencies, focusing on
-            simplicity and clarity.
-          </Typography>
-        </li>
-      </ul>
       <Typography
         variant="h5"
         className="mt-10 mb-6 text-gray-100 text-center md:text-left"
@@ -74,7 +20,7 @@ const Installation = () => {
       <Typography variant="body1" className="mb-6 text-gray-300 leading-relaxed">
         To install Hasty Server, run the following command:
       </Typography>
-      <SyntaxHighlighter language="bash" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="bash" style={dracula} className="mb-6">
         npm install hasty-server
       </SyntaxHighlighter>
       <Typography
@@ -86,7 +32,7 @@ const Installation = () => {
       <Typography variant="body1" className="mb-6 text-gray-300 leading-relaxed">
         Here is a quick example to get you started with Hasty Server:
       </Typography>
-      <SyntaxHighlighter language="javascript" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="javascript" style={dracula} className="mb-6">
         {`const Hasty = require('hasty-server');
 const server = new Hasty();
 
@@ -119,7 +65,7 @@ server.listen(8080, () => {
         <code>server.get()</code> or <code>server.post()</code> to handle
         specific routes.
       </Typography>
-      <SyntaxHighlighter language="javascript" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="javascript" style={dracula} className="mb-6">
         {`server.get('/home', (req, res) => {
     res.send('Welcome to the Home Page');
 });`}
@@ -144,7 +90,7 @@ server.listen(8080, () => {
         Send responses using the <code>res.send()</code> method or return a
         status code with <code>res.sendStatus()</code>.
       </Typography>
-      <SyntaxHighlighter language="javascript" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="javascript" style={dracula} className="mb-6">
         {`server.post('/data', (req, res) => {
     res.send(JSON.stringify({ message: 'Data received!' }));
 });`}
