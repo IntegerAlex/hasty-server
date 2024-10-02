@@ -95,6 +95,8 @@ For more information, see .
 
 ### LICENSE
 
-This project is licensed under The GPLV3 License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under GOFL (Global Opensource softwares Free License) and  GPL-v3 (General Public License) - see the [LICENSE](LICENSE.md) and [GPL-v3](GPLV3.md)file for details.
+
+```
 All rights reserved to the author.
 ```
