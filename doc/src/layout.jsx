@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <div className="flex flex-1">
         {/* Sidebar Navigation */}
         <nav
-          className={`w-64 bg-gray-900 p-4 transition-all duration-300 ease-in-out transform ${
+          className={`w-64 bg-[#0F1115] p-4 transition-all duration-300 ease-in-out transform ${
             isNavOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0 md:block`}
         >
@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 text-white hover:text-gray-300 ${
+                  `flex items-center gap-3 text-[#A6A4A0]  hover:text-gray-300 ${
                     isActive ? "bg-gray-800 text-blue-400 font-bold rounded-md" : ""
                   } p-2`
                 }
@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/features"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 text-white hover:text-gray-300 ${
+                  `flex items-center gap-3 text-[#A6A4A0] hover:text-gray-300 ${
                     isActive ? "bg-gray-800 text-blue-400 font-bold rounded-md" : ""
                   } p-2`
                 }
@@ -44,7 +44,7 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/installation"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 text-white hover:text-gray-300 ${
+                  `flex items-center gap-3 text-[#A6A4A0]  hover:text-gray-300 ${
                     isActive ? "bg-gray-800 text-blue-400 font-bold rounded-md" : ""
                   } p-2`
                 }
@@ -56,7 +56,7 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/quickstart"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 text-white hover:text-gray-300 ${
+                  `flex items-center gap-3 text-[#A6A4A0]  hover:text-gray-300 ${
                     isActive ? "bg-gray-800 text-blue-400 font-bold rounded-md" : ""
                   } p-2`
                 }
@@ -69,7 +69,7 @@ const Layout = ({ children }) => {
               <NavLink
                 to="/helloWorld"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 text-white hover:text-gray-300 ${
+                  `flex items-center gap-3 text-[#A6A4A0]  hover:text-gray-300 ${
                     isActive ? "bg-gray-800 text-blue-400 font-bold rounded-md" : ""
                   } p-2`
                 }
@@ -81,7 +81,7 @@ const Layout = ({ children }) => {
         </nav>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-4 bg-gray-800 text-white">
+        <main className="flex-1 p-4 bg-gray-800 text-[#A6A4A0] ">
           {/* Hamburger button for mobile */}
           <button
             className="md:hidden mb-4 text-blue-500"

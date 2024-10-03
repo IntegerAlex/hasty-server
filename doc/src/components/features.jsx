@@ -2,20 +2,20 @@ import Typography from "./general/typography";
 
 const Features = () => {
   return (
-    <div className="p-6 bg-black shadow-lg rounded-lg md:p-8 lg:p-10">
+    <div className="p-6  bg-[#0F1115] shadow-lg rounded-lg md:p-8 lg:p-10">
       <Typography
         variant="h4"
-        className="mb-6 text-gray-100 text-center md:text-left font-bold"
+        className="mb-6 text-[#A6A4A0] text-center md:text-left font-bold"
       >
         Key Features of Hasty Server
       </Typography>
 
       <ul className="list-disc list-inside mb-6 text-gray-300 leading-relaxed space-y-6">
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • High Performance
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             Hasty Server is designed for speed. It’s built using low-level
             networking APIs, ensuring minimal overhead and high concurrency.
             This makes it capable of handling thousands of requests per second
@@ -24,10 +24,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Developer Friendly
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             It offers a simple and intuitive API, inspired by Express.js.
             Whether you’re a beginner or an experienced developer, the clear
             structure and easy-to-use syntax allow you to build applications
@@ -36,10 +36,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Built-in Security
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             Security is a top priority. Hasty Server includes built-in
             protections against common vulnerabilities such as XSS (Cross-Site
             Scripting), CSRF (Cross-Site Request Forgery), and SQL injection,
@@ -48,10 +48,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Extensible Architecture
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             With its middleware-based architecture, Hasty Server allows you to
             add custom plugins and middlewares. You can extend its functionality
             by adding your own handlers or integrating third-party libraries
@@ -60,10 +60,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Lightweight & Minimal
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             Despite its powerful features, Hasty Server remains lightweight and
             efficient. It minimizes resource consumption, making it ideal for
             resource-constrained environments such as microservices or
@@ -72,10 +72,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Scalable
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             Whether you are building a small personal project or a large-scale
             enterprise application, Hasty Server scales effortlessly. Its
             modular design lets you efficiently manage growing traffic and
@@ -84,10 +84,10 @@ const Features = () => {
         </li>
 
         <li className="mb-4">
-          <Typography variant="h5" className="text-gray-100 font-semibold">
+          <Typography variant="h5" className="text-[#A6A4A0] font-semibold">
             • Flexible Routing
           </Typography>
-          <Typography variant="body1" className="text-gray-400">
+          <Typography variant="body1" className="text-[#B2A49B]">
             Hasty Server provides a flexible routing system, allowing you to
             define routes for different HTTP methods (GET, POST, PUT, DELETE,
             etc.). You can also create dynamic routes with parameters for even
