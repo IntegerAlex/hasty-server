@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Header from "./components/header";
 import Typography from "./components/general/typography";
 import { CiMenuBurger, CiCircleChevLeft } from "react-icons/ci";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
 
 const Layout = ({ children }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -66,6 +65,18 @@ const Layout = ({ children }) => {
                 <Typography variant="body1">Quick Start</Typography>
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/helloworld"
+                className={({ isActive }) =>
+                  `text-white hover:text-gray-300 ${
+                    isActive ? "font-bold" : ""
+                  }`
+                }
+              >
+                <Typography variant="body1">Hello World</Typography>
+              </NavLink>
+            </li>
           </ul>
         </nav>
         {
@@ -88,3 +99,4 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+

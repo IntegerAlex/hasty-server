@@ -1,6 +1,6 @@
 import Typography from "./general/typography";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const QuickStart = () => {
@@ -26,7 +26,7 @@ const QuickStart = () => {
         First, you need to install Hasty Server using npm. Run the following
         command in your terminal:
       </Typography>
-      <SyntaxHighlighter language="bash" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="bash" style={dracula} className="mb-6">
         npm install hasty-server
       </SyntaxHighlighter>
       <Typography variant="h5" className="mt-10 mb-6 text-gray-100">
@@ -39,7 +39,7 @@ const QuickStart = () => {
         Create a new JavaScript file (e.g., <code>server.js</code>) and add the
         following code to set up a basic Hasty Server:
       </Typography>
-      <SyntaxHighlighter language="javascript" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="javascript" style={dracula} className="mb-6">
         {`const Hasty = require('hasty-server');
 const server = new Hasty();
 
@@ -60,7 +60,7 @@ server.listen(8080, () => {
       >
         Run the following command in your terminal to start the server:
       </Typography>
-      <SyntaxHighlighter language="bash" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="bash" style={dracula} className="mb-6">
         node server.js
       </SyntaxHighlighter>
       <Typography
@@ -82,7 +82,7 @@ server.listen(8080, () => {
         <code>server.get()</code> or <code>server.post()</code> methods. For
         example:
       </Typography>
-      <SyntaxHighlighter language="javascript" style={darcula} className="mb-6">
+      <SyntaxHighlighter language="javascript" style={dracula} className="mb-6">
         {`server.get('/home', (req, res) => {
     res.send('Welcome to the Home Page');
 });
