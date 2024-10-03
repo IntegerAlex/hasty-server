@@ -1,3 +1,4 @@
+
 const Introduction = () => {
   return (
     <div className="p-6 bg-gray-900 shadow-lg rounded-lg md:p-8 lg:p-10">
@@ -48,6 +49,7 @@ const Introduction = () => {
         <li className="mb-2">
           <strong>Secure:</strong> Built-in security features to protect your applications 
           and data.
+
         </li>
       </ul>
     </div>

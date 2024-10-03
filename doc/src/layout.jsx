@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import Header from "./components/header";
 import Typography from "./components/general/typography";
+import { CiMenuBurger, CiCircleChevLeft } from "react-icons/ci";
 import { useState } from "react";
 
 const Layout = ({ children }) => {
@@ -78,12 +79,17 @@ const Layout = ({ children }) => {
             </li>
           </ul>
         </nav>
+        {
+// Updated the navigation button to replace the text labels with icons for better visual appeal and user experience.
+// The button now uses <CiCircleChevLeft /> to indicate "Close Menu" and <CiMenuBurger /> for "Open Menu".
+// Added Tailwind CSS class "text-2xl" for appropriate icon sizing.
+        }
         <main className="flex-1 p-4 bg-gray-800 text-white">
           <button
-            className="md:hidden mb-4 text-blue-500"
+            className="md:hidden mb-4 text-blue-500 text-2xl"
             onClick={() => setIsNavOpen(!isNavOpen)}
           >
-            {isNavOpen ? "Close Menu" : "Open Menu"}
+            {isNavOpen ? <CiCircleChevLeft /> : <CiMenuBurger />}
           </button>
           {children}
         </main>
