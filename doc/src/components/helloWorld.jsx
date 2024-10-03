@@ -3,7 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 const HelloWorld = () => {
   return (
-    <div className="p-6 bg-gray-900 shadow-lg rounded-lg md:p-8 lg:p-10">
+    <div className="p-6 bg-black shadow-lg rounded-lg md:p-8 lg:p-10">
       <h3 className="mb-6 text-gray-100">Hello World with Hasty Server</h3>
       <p className="mb-6 text-gray-300 leading-relaxed">
         Hasty Server allows you to quickly set up a web server.

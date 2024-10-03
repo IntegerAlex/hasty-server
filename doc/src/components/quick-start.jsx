@@ -5,7 +5,7 @@ import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const QuickStart = () => {
   return (
-    <div className="p-6 bg-gray-900 shadow-lg rounded-lg md:p-8 lg:p-10">
+    <div className="p-6 bg-black shadow-lg rounded-lg md:p-8 lg:p-10">
       <Typography variant="h4" className="mb-6 text-gray-100">
         Quick Start
       </Typography>

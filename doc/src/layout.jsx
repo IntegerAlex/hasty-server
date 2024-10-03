@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
       <Header />
       <div className="flex flex-1">
         <nav
-          className={`w-48 bg-gray-900 p-4 ${
+          className={`w-48 bg-black p-4 ${
             isNavOpen ? "block" : "hidden"
           } md:block`}
         >
