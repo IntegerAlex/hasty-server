@@ -50,7 +50,7 @@ const Introduction = () => {
         Hasty Server offers a range of features that make it a powerful and
         flexible web server:
       </Typography>
-      <ul className="list-disc list-inside mb-6 pl-6 text-gray-300 leading-relaxed">
+      <ul className="list-disc list-outside mb-6 pl-6 text-gray-300 leading-relaxed">
         <li className="mb-2">
           <Typography variant="body1">
             <strong>High Performance:</strong> Built with Rust, Hasty Server is
