@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.6] - 2024-10-05
+### Fixed
+- Fixed the issue of POST requests containing BODY data not being parsed correctly.
+
 ##  [0.5.5] - 2024-10-02
 ### Added
 - Added Chaining of response methods.
