@@ -79,7 +79,7 @@ If you would like to contribute to Hasty Server, you're welcome to:
  - Fork the repository.
  - Create a branch for your feature or bugfix.
  - Submit a pull request.
- - Please make sure to read the [contribution guidelines](COCONTRIBUTING.md) for more details.
+ - Please make sure to read the [contribution guidelines](CONTRIBUTING.md) for more details.
 
 Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
 
