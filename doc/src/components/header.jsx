@@ -12,6 +12,16 @@ const Header = () => {
       </div>
       <nav>
         <ul className="flex space-x-4">
+        <li>
+            <a
+              href="https://github.com/IntegerAlex/hasty-server"
+              className="text-[#f3ce1f] hover:text-[#a89223]"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Typography variant="body1">view on github</Typography>
+            </a>
+          </li>
           <li>
             <a
               href="https://www.npmjs.com/package/hasty-server"
