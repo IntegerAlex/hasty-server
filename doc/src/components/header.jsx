@@ -19,6 +19,16 @@ const Header = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
+              <Typography variant="body1">view on github</Typography>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.npmjs.com/package/hasty-server"
+              className="text-[#f3ce1f] hover:text-[#928b69]"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Typography variant="body1">Package Download</Typography>
             </a>
           </li>
