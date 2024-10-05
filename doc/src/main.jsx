@@ -8,6 +8,9 @@ import Features from "./components/features.jsx";
 import Installation from "./components/installation.jsx";
 import QuickStart from "./components/quick-start.jsx";
 import HelloWorld from "./components/helloWorld.jsx";
+// navigationButtons routes
+import NavigationButtons from "./components/navigationButtons.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
@@ -19,6 +22,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="/quickstart" element={<QuickStart />} />
           <Route path="/helloworld" element={<HelloWorld />} /> 
         </Routes>
+        <NavigationButtons />
       </Layout>
     </Router>
   </StrictMode>
