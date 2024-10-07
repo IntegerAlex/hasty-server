@@ -1,3 +1,6 @@
+const fs = require('fs');
+const {lookupMimeType} = require('../lib/utils');
+const path = require('path');
 class Response {
     statusCode = 200; // Default status code
     statusTextMap = {
@@ -73,11 +76,23 @@ class Response {
     this.socket.end(); // End the connection
 	}
 
+	sendFile(file) {
+		const mimeType =lookupMimeType(path.extname(file).slice(1))	
+		const stream = fs.createReadStream(file)
+		const response = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\nContent-Type: ${mimeType}\n\n`;	
+		this.socket.write(response); //send the headers
+		stream.on('data',(data)=>{	
+			this.socket.write(data); //  Send the response
+		})
+		stream.on('end',()=>{
+			this.socket.end(); // End the connection
+		})
+		stream.on('error',(err)=>{
+			cosole.log(err) // Log the error
+			this.sendStatus(500); // Send a 500
+		})
 
-
-
-
+	}
 }
-
 module.exports = Response;
 
