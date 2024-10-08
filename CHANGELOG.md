@@ -1,6 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.6.0] - 2024-10-09
+### Fixed
+- HTTPParserError: Response does not match the HTTP/1.1 protocol (Invalid header value char)
+   -  The issue was due to using `\n` instead of `\r\n` to terminate header lines. Each header should end with `\r\n` for proper protocol compliance.
+
+
+### Added
+- Added `sendFile()` method to send files as response.
+- Added `server.close()` This method has been implemented to explicitly close the server when necessary.
+- Added  mime-types library to handle content-type for files.
+
 ## [0.5.6] - 2024-10-05
 ### Fixed
 - Fixed the issue of POST requests containing BODY data not being parsed correctly.
