@@ -1,8 +1,9 @@
 const fs = require('fs');
-const {lookupMimeType} = require('../lib/utils');
+const { lookupMimeType } = require('../lib/utils');
 const path = require('path');
+
 class Response {
-    statusCode = 200; // Default status code
+    statusCode = 200;
     statusTextMap = {
         200: 'OK',
         201: 'Created',
@@ -23,76 +24,89 @@ class Response {
         500: 'Internal Server Error',
         501: 'Not Implemented',
         503: 'Service Unavailable'
-        //... Add more status codes as needed
-    }; // Map of status codes to status text
+    };
 
     constructor(socket) {
         this.socket = socket;
+        this.headers = {};
     }
 
-    // Method to set status code
     status(code) {
-        if (this.statusTextMap[code] === undefined) {
+        if (!this.statusTextMap[code]) {
             throw new Error(`Invalid status code: ${code}`);
         }
-      
         this.statusCode = code;
         return this;
     }
 
-    // Method to set headers
     setHeader(key, value) {
         this.headers[key] = value;
         return this;
     }
 
-    // Method to send a response with a body
-    send(body) {
-        const response = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\n\n${body}`;
-        this.socket.write(response); // Send the complete response
-        this.socket.end(); // End the connection
-    }
-
-    // Method to send only the status
-    sendStatus(statusCode) {
-	    const response = `HTTP/1.1 ${statusCode} ${this.statusTextMap[this.statusCode]} \n\n`;
-	    this.socket.write(response); // Send the complete response
-        this.socket.end(); // End the connection
-    }
-
-    // Helper method to format headers
     formatHeaders() {
         return Object.keys(this.headers)
             .map(key => `${key}: ${this.headers[key]}`)
             .join('\r\n');
     }
 
-  
-  // Send Json response
-	json(data) {
-		data = JSON.stringify(data);
-		const  response = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\nContent-Type: application/json\n\n${data}`;
-		this.socket.write(response); // Send the complete response
-    this.socket.end(); // End the connection
-	}
+send(data) {
+	console.log(data);
+	console.log(typeof data);
+    if (typeof data !== 'string') {
+        // If the data is not a string, assume it's an object or array and send as JSON
+        return this.json(data);
+    }
 
-	sendFile(file) {
-		const mimeType =lookupMimeType(path.extname(file).slice(1))	
-		const stream = fs.createReadStream(file)
-		const response = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\nContent-Type: ${mimeType}\n\n`;	
-		this.socket.write(response); //send the headers
-		stream.on('data',(data)=>{	
-			this.socket.write(data); //  Send the response
-		})
-		stream.on('end',()=>{
-			this.socket.end(); // End the connection
-		})
-		stream.on('error',(err)=>{
-			cosole.log(err) // Log the error
-			this.sendStatus(500); // Send a 500
-		})
+    // If it's a string, send as plain text
+    this.setHeader('Content-Type', 'text/plain');
+    this.setHeader('Content-Length', Buffer.byteLength(data));
 
-	}
+    const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+    this.socket.write(headers + data);
+    this.socket.end();
 }
+
+
+    sendStatus(statusCode) {
+        this.status(statusCode);
+        const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+        this.socket.write(headers);
+        this.socket.end();
+    }
+
+    json(data) {
+        const body = JSON.stringify(data);
+        this.setHeader('Content-Type', 'application/json');
+        this.setHeader('Content-Length', Buffer.byteLength(body));
+        const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+        this.socket.write(headers + body);
+        this.socket.end();
+    }
+
+    sendFile(file) {
+        const mimeType = lookupMimeType(path.extname(file).slice(1));
+        this.setHeader('Content-Type', mimeType);
+
+        fs.stat(file, (err, stats) => {
+            if (err) {
+                this.sendStatus(404);
+                return;
+            }
+
+            this.setHeader('Content-Length', stats.size);
+            const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+            this.socket.write(headers);
+
+            const stream = fs.createReadStream(file);
+            stream.pipe(this.socket);
+
+            stream.on('error', () => {
+                this.sendStatus(500);
+            });
+        });
+    }
+}
+
 module.exports = Response;
 
