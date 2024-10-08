@@ -84,11 +84,9 @@ If you would like to contribute to Hasty Server, you're welcome to:
 Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
 
 ### CHANGELOG
- 
-It now Supports: PUT & DELETE HTTP methods and chaining of response methods.
-
-`res.status(200).send('Hello World')`
-
+ -  v0.6.0 
+    - Added `sendFile()` method to send static files.
+    - Added `server.close()` method to close the server explicitly.
 
 For more information, see .
 [CHANGELOG](CHANGELOG.md)
