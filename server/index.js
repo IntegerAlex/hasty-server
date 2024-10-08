@@ -1,6 +1,7 @@
 const { httpParser } = require('../lib/httpParser.js'); // Import the httpParser function from the httpParser.js file
 const net = require('net');// Import the net module from Node.JS
 const  Response = require('./response.js' ); // Import the response object
+import {warn} from 'console'
 function  getSocket(callback,context){
 	return net.createServer(Socket=>callback(Socket,context))
 }
