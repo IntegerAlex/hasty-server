@@ -44,6 +44,10 @@ class  Server  {
 	listen(PORT,callback){
 		this.socket.listen(PORT,callback)
 	}
+	close(){
+		this.socket.close()
+		warn("Server closed")
+	}	
 }
 
 class  Hasty extends Server{
