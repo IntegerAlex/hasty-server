@@ -11,13 +11,14 @@ function handler(socket,context){
 		const  res =  new Response(socket)
          const buff = data.toString(); // Convert buffer data to string
 		 httpParser(buff)
-		 .then((data) => {
-			 pathController(data, context, res);
-		 })
-		 .catch((error) => {
-			 console.error("Error parsing HTTP request:", error);
-			 res.sendStatus(400); // Send a Bad Request status
-		 });
+    .then((data) => {
+        pathController(data, context, res);
+    })
+    .catch((error) => {
+        console.error("Error parsing HTTP request:", error);
+        res.sendStatus(400); // Send a Bad Request status
+    });
+
 	 
      });
 
