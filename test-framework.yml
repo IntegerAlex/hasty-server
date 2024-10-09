@@ -21,15 +21,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Specify the Node.js version used by the project
+          node-version: '20' # Specify the Node.js version used by the project
 
-      # Step 3: Install dependencies (if a package manager like npm or yarn is used)
+      # Step 3: Change directory and install dependencies
       - name: Install dependencies
-        run: npm install # or `yarn install` if using yarn
+        run: |
+          cd test # Change directory to test
+          npm install # Run npm install inside the test directory
 
-      # Step 4: Run tests
+      # Step 4: Change directory and run tests
       - name: Run Tests
-        run: npm test # Replace with the actual test command for the framework
+        run: |
+          cd test # Change directory to test
+          npm test # Run tests inside the test directory
 
       # Optionally, Step 5: Upload test results if you want to store them
       - name: Archive test results
@@ -37,4 +41,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: test-results
+          path: test/test-results # Adjust path to point to the correct test results folder
+
