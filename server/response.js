@@ -50,22 +50,30 @@ class Response {
             .join('\r\n');
     }
 
-send(data) {
-	console.log(data);
-	console.log(typeof data);
-    if (typeof data !== 'string') {
-        // If the data is not a string, assume it's an object or array and send as JSON
-        return this.json(data);
+    send(data) {
+        console.log(data);
+        console.log(typeof data);
+    
+        // Set Content-Type based on the type of data being sent
+        if (typeof data === 'string') {
+            // If the data is a string, check if it's HTML
+            if (data.startsWith('<') && data.endsWith('>')) {
+                this.setHeader('Content-Type', 'text/html'); // Set Content-Type to HTML
+            } else {
+                this.setHeader('Content-Type', 'text/plain'); // Default to plain text
+            }
+        } else {
+            // If the data is an object or array, send as JSON
+            return this.json(data);
+        }
+    
+        this.setHeader('Content-Length', Buffer.byteLength(data));
+    
+        const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+        this.socket.write(headers + data);
+        this.socket.end();
     }
-
-    // If it's a string, send as plain text
-    this.setHeader('Content-Type', 'text/plain');
-    this.setHeader('Content-Length', Buffer.byteLength(data));
-
-    const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
-    this.socket.write(headers + data);
-    this.socket.end();
-}
+    
 
 
     sendStatus(statusCode) {
@@ -87,26 +95,33 @@ send(data) {
     sendFile(file) {
         const mimeType = lookupMimeType(path.extname(file).slice(1));
         this.setHeader('Content-Type', mimeType);
-
+    
         fs.stat(file, (err, stats) => {
             if (err) {
                 this.sendStatus(404);
                 return;
             }
-
+    
             this.setHeader('Content-Length', stats.size);
+    
             const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
             this.socket.write(headers);
-
+    
             const stream = fs.createReadStream(file);
             stream.pipe(this.socket);
-
+    
             stream.on('error', () => {
                 this.sendStatus(500);
+            });
+    
+            stream.on('end', () => {
+                this.socket.end();
             });
         });
     }
 }
+    
+    
 
 module.exports = Response;
 
