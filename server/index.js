@@ -10,12 +10,15 @@ function handler(socket,context){
 	 socket.on('data', (data) => {
 		const  res =  new Response(socket)
          const buff = data.toString(); // Convert buffer data to string
-         httpParser(buff) // Parse the HTTP request
-             .then((data) => {
-                //console.log("test : "+JSON.stringify(data)); // Log the parsed data
-		pathController(data,context,res)    
-			
-             });
+		 httpParser(buff)
+		 .then((data) => {
+			 pathController(data, context, res);
+		 })
+		 .catch((error) => {
+			 console.error("Error parsing HTTP request:", error);
+			 res.sendStatus(400); // Send a Bad Request status
+		 });
+	 
      });
 
 }
