@@ -95,7 +95,6 @@ class Response {
     sendFile(file) {
         const mimeType = lookupMimeType(path.extname(file).slice(1));
         this.setHeader('Content-Type', mimeType);
-        this.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
     
         fs.stat(file, (err, stats) => {
             if (err) {
@@ -120,6 +119,7 @@ class Response {
             });
         });
     }
+}
     
     
 
