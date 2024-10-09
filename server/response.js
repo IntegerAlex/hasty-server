@@ -119,6 +119,36 @@ class Response {
             });
         });
     }
+
+	download(file, filename) {
+		const mimeType = lookupMimeType(path.extname(file).slice(1));
+		this.setHeader('Content-Type', mimeType);
+		this.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+		fs.stat(file, (err, stats) => {
+			if (err) {
+				this.sendStatus(404);
+				return;
+			}
+
+			this.setHeader('Content-Length', stats.size);
+
+			const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`;
+			this.socket.write(headers);
+
+			const stream = fs.createReadStream(file);
+			stream.pipe(this.socket);
+
+			stream.on('error', () => {
+				this.sendStatus(500);
+			});
+
+			stream.on('end', () => {
+				this.socket.end();
+			});
+		});
+	}
+
 }
     
     
