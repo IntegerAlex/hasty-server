@@ -1,7 +1,7 @@
 
 const Introduction = () => {
   return (
-    <div className="p-6 bg-gray-900 shadow-lg rounded-lg md:p-8 lg:p-10">
+    <div className="p-6 bg-black shadow-lg rounded-lg md:p-8 lg:p-10">
       <h3 className="mb-6 text-gray-100">Introduction</h3>
       <p className="mb-6 text-gray-300 leading-relaxed">
         Hasty Server is a lightweight, fast, and easy-to-use web server written entirely in 

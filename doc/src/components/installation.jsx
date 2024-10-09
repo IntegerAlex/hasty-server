@@ -4,7 +4,7 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Use
 
 const Installation = () => {
   return (
-    <div className="p-6 bg-gray-900 shadow-lg rounded-lg md:p-8 lg:p-10">
+    <div className="p-6 bg-black shadow-lg rounded-lg md:p-8 lg:p-10">
       <Typography
         variant="h4"
         className="mb-6 text-gray-100 text-center md:text-left"
