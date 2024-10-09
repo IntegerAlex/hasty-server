@@ -1,0 +1,45 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the latest version of the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment (you can specify a specific version)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Specify the Node.js version used by the project
+
+      # Step 3: Change directory and install dependencies
+      - name: Install dependencies
+        run: |
+          cd test # Change directory to test
+          npm install # Run npm install inside the test directory
+
+      # Step 4: Change directory and run tests
+      - name: Run Tests
+        run: |
+          cd test # Change directory to test
+          npm test # Run tests inside the test directory
+
+      # Optionally, Step 5: Upload test results if you want to store them
+      - name: Archive test results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test/test-results # Adjust path to point to the correct test results folder
+
