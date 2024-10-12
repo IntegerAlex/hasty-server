@@ -12,4 +12,5 @@ module.exports = {
     "/test/httpParser.test.js", // ignore current tests
     "/test/index.html",
   ],
+  setupFiles: ["./jest.setup.js"],
 };
