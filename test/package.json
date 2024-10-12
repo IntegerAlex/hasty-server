@@ -4,7 +4,7 @@
   "description": "testing for hast-server",
   "main": "index.test.js",
   "scripts": {
-    "test": "jest"
+    "test:unit": "NODE_ENV=unit-test jest -c jest.config.js --runInBand --"
   },
   "author": "Akshat Kotpalliwar",
   "license": "MIT",
