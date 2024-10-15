@@ -10,7 +10,7 @@ function  getSocket(callback,context){
 
 function handler(socket,context){
 	 socket.on('data', (data) => {
-		const  res =  new Response(socket)
+		const  res =  new Response(socket,context.enableCors) // Set up a new Response object with the socket and cors state
          const buff = data.toString(); // Convert buffer data to string
 		 httpParser(buff)
     .then((data) => {
@@ -61,6 +61,7 @@ class  Hasty extends Server{
 	 
 	constructor(){
 		super()
+		this.enableCors = false; // default to false
 		this.socket.on('data', ()=> this.handler())
 	}
 
@@ -72,7 +73,11 @@ class  Hasty extends Server{
 		this.routes.push(route)
 		console.log(this.routes)
 	}
-
+		//  Enable CORS
+	  cors(enable) {
+	console.log("cors enabled")
+        this.enableCors = enable;
+    }
 
 	get(path,callback){
 		this.setRoute("GET",{callback:callback,path:path})	

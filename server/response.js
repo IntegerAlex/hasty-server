@@ -4,6 +4,7 @@ const path = require('path');
 
 class Response {
     statusCode = 200;
+    enableCors = false; // default to false
     statusTextMap = {
         200: 'OK',
         201: 'Created',
@@ -26,8 +27,9 @@ class Response {
         503: 'Service Unavailable'
     };
 
-    constructor(socket) {
+    constructor(socket , enableCors) {
         this.socket = socket;
+	this.enableCors = enableCors; // Set the cors state
         this.headers = {};
     }
 
@@ -43,6 +45,14 @@ class Response {
         this.headers[key] = value;
         return this;
     }
+	// Set CORS headers
+	  setCorsHeaders() {
+        if (this.enableCors) {
+            this.setHeader('Access-Control-Allow-Origin', '*');
+            this.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            this.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }
+    }
 
     formatHeaders() {
         return Object.keys(this.headers)
@@ -51,9 +61,9 @@ class Response {
     }
 
     send(data) {
-        console.log(data);
-        console.log(typeof data);
-    
+   	if(this.enableCors){ 
+		this.setCorsHeaders();
+	}
         // Set Content-Type based on the type of data being sent
         if (typeof data === 'string') {
             // If the data is a string, check if it's HTML
@@ -84,6 +94,9 @@ class Response {
     }
 
     json(data) {
+	    if(this.enableCors){
+		this.setCorsHeaders();
+	    }
         const body = JSON.stringify(data);
         this.setHeader('Content-Type', 'application/json');
         this.setHeader('Content-Length', Buffer.byteLength(body));
@@ -93,6 +106,9 @@ class Response {
     }
 
     sendFile(file) {
+	    if(this.enableCors){
+		this.setCorsHeaders();
+	    }
         const mimeType = lookupMimeType(path.extname(file).slice(1));
         this.setHeader('Content-Type', mimeType);
     
@@ -121,6 +137,9 @@ class Response {
     }
 
 	download(file, filename) {
+		if(this.enableCors){
+			this.setCorsHeaders();
+		}
 		const mimeType = lookupMimeType(path.extname(file).slice(1));
 		this.setHeader('Content-Type', mimeType);
 		this.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
