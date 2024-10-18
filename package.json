@@ -1,6 +1,6 @@
 {
   "name": "hasty-server",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "main": "./server/index.js",
   "directories": {
     "lib": "lib",
@@ -32,7 +32,7 @@
     "type": "git",
     "url": "https://github.com/IntegerAlex/hasty-server.git"
   },
-"homepage": "https://hasty-server.vercel.app",
+  "homepage": "https://hasty-server.vercel.app",
   "license": "GPL-3.0",
   "description": "A  Blazing fast simple http server for node.js"
 }
