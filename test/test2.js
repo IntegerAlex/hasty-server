@@ -5,7 +5,6 @@ const server = new Server()
 
 // Test response in json format
 server.get('/', (req, res) => {
-  
   res.json({ status: 200 })
 })
 
@@ -28,5 +27,5 @@ server.get('/chain-status', (req, res) => {
 })
 
 server.listen(8080, () => {
-  
+
 })

@@ -27,24 +27,19 @@ function pathController (data, context, res) {
   const path = data.path
   const method = data.method
 
-  
-
   // Find the matching route, accounting for parameters
   const route = context.routes.find(route => {
     return matchRouteWithParams(route.path, path) && route.method === method
   })
 
   if (route) {
-    
-
     // Extract parameters from the matched route
     const params = extractParams(route.path, path)
-     // Log extracted params
+    // Log extracted params
 
     data.params = params // Attach extracted params to data
     route.callback(data, res) // Pass the updated data with params
   } else {
-    
     res.sendStatus(404) // Route not found
   }
 }
@@ -122,12 +117,10 @@ class Hasty extends Server {
     route.path = object.path
     route.method = method
     this.routes.push(route)
-    
   }
 
   //  Enable CORS
 	  cors (enable) {
-    
     this.enableCors = enable
   }
 
