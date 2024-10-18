@@ -1,6 +1,5 @@
 # Hasty 
 
-
 ![NPM Version](https://img.shields.io/npm/v/hasty-server)
 ![NPM Downloads](https://img.shields.io/npm/d18m/hasty-server)
 ![NPM License](https://img.shields.io/npm/l/hasty-server)
@@ -84,9 +83,9 @@ If you would like to contribute to Hasty Server, you're welcome to:
 Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
 
 ### CHANGELOG
- -  v0.6.0 
-    - Added `sendFile()` method to send static files.
-    - Added `server.close()` method to close the server explicitly.
+ -  v0.8.0 
+    - Added `download()` method to send file as an attachment.
+    - Added `server.cors(true)` to enable `cors`.
 
 For more information, see .
 [CHANGELOG](CHANGELOG.md)

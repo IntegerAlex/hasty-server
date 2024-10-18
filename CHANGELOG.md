@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.0] - 2024-10-10
+### Fixed
+- Fixed the issue of `res.download()` not sending the correct response.
+
+### Added
+- Added support for `cors` middleware to enable Cross-Origin Resource Sharing.
+    -  which is in built by using  `server.cors(true)` to enable cors.
+- Added support for `params` in routes. Now you can define routes with parameters like `/users/:id` and access the parameter value using `req.params.id`.
+- Added `download()` method to the response object `res.download()`.
+
 ## [0.6.0] - 2024-10-09
 ### Fixed
 - HTTPParserError: Response does not match the HTTP/1.1 protocol (Invalid header value char)

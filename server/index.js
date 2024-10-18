@@ -26,19 +26,75 @@ function handler(socket,context){
 
 }
 
-
-
-function pathController(data,context, socket) {
+function pathController(data, context, res) {
     const path = data.path;
-	const  method = data.method
-    console.log("pathController: " + method + ": " + path);
+    const method = data.method;
 
-    // Check if the path exists in the context.routes
-    const route = context.routes.find(route => route.path === path && route.method === method);
-    if (route) route.callback(data, socket); 
-	  else socket.sendStatus(404);
+    console.log("Received path: " + path + ", Method: " + method);
+
+    // Find the matching route, accounting for parameters
+    const route = context.routes.find(route => {
+        return matchRouteWithParams(route.path, path) && route.method === method;
+    });
+
+    if (route) {
+        console.log("Route matched: " + route.path);
+
+        // Extract parameters from the matched route
+        const params = extractParams(route.path, path);
+        console.log("Extracted params:", params); // Log extracted params
+
+        data.params = params;  // Attach extracted params to data
+        route.callback(data, res);  // Pass the updated data with params
+    } else {
+        console.log("No route matched");
+        res.sendStatus(404);  // Route not found
+    }
 }
 
+// Helper function to check if the route matches, including parameters
+function matchRouteWithParams(routePath, actualPath) {
+    const routeParts = routePath.split('/');
+    const pathParts = actualPath.split('/');
+
+    if (routeParts.length !== pathParts.length) return false;
+
+    return routeParts.every((part, index) => {
+        return part.startsWith(':') || part === pathParts[index];
+    });
+}
+
+// Helper function to extract params from the matched route
+function extractParams(routePath, actualPath) {
+    const routeParts = routePath.split('/');
+    const pathParts = actualPath.split('/');
+    const params = {};
+
+    routeParts.forEach((part, index) => {
+        if (part.startsWith(':')) {
+            const paramName = part.slice(1);  // Remove the colon (:) from parameter name
+            params[paramName] = pathParts[index];  // Assign actual path value
+        }
+    });
+
+    return params;
+}
+
+
+//function pathController(data,context, socket) {
+//    const path = data.path;
+//	const  method = data.method
+//    console.log("pathController: " + method + ": " + path);
+//
+//
+//
+//
+//    // Check if the path exists in the context.routes
+//    const route = context.routes.find(route => route.path === path && route.method === method);
+//    if (route) route.callback(data, socket); 
+//	  else socket.sendStatus(404);
+//}
+//
 
 
 class  Server  {
