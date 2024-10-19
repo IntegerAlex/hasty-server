@@ -125,7 +125,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Hasty Server. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Hasty Server.`,
       },
       prism: {
         theme: prismThemes.github,
