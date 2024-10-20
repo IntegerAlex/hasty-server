@@ -21,15 +21,15 @@ const sidebars = {
     {
       type: 'category',
       label: 'Tutorial',
-      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start','tutorial-basics/hello-world-with-hasty-server'],
+      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start', 'tutorial-basics/hello-world-with-hasty-server']
     },
 	  {
 		  type: 'category',
 		  label: 'API for Developers',
-		  items:['tutorial-basics/Installation'],
+		  items: ['tutorial-basics/Installation']
 	  }
-  ],
- 
-};
+  ]
 
-export default sidebars;
+}
+
+export default sidebars

@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -31,7 +31,7 @@ const config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en']
   },
 
   presets: [
@@ -44,13 +44,13 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/'
         },
         blog: {
           showReadingTime: true,
           feedOptions: {
             type: ['rss', 'atom'],
-            xslt: true,
+            xslt: true
           },
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -59,13 +59,13 @@ const config = {
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+          onUntruncatedBlogPosts: 'warn'
         },
         theme: {
-          customCss: './src/css/custom.css',
-        },
-      }),
-    ],
+          customCss: './src/css/custom.css'
+        }
+      })
+    ]
   ],
 
   themeConfig:
@@ -84,15 +84,15 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'docSidebar',
             position: 'left',
-            label: 'Docs',
+            label: 'Docs'
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          { to: '/blog', label: 'Blog', position: 'left' },
           {
             href: 'https://github.com/IntegerAlex/hasty-server.git',
             label: 'GitHub',
-            position: 'right',
-          },
-        ],
+            position: 'right'
+          }
+        ]
       },
       footer: {
         style: 'dark',
@@ -102,36 +102,36 @@ const config = {
             items: [
               {
                 label: 'Docs',
-                to: '/docs/intro',
-              },
-            ],
+                to: '/docs/intro'
+              }
+            ]
           },
           {
             title: 'Community',
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/IntegerAlex/hasty-server.git',
-              },
-            ],
+                href: 'https://github.com/IntegerAlex/hasty-server.git'
+              }
+            ]
           },
           {
             title: 'More',
             items: [
               {
                 label: 'Blog',
-                to: '/blog',
-              },
-            ],
-          },
+                to: '/blog'
+              }
+            ]
+          }
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Hasty Server.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Hasty Server.`
       },
       prism: {
         theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
-      },
-    }),
-};
+        darkTheme: prismThemes.dracula
+      }
+    })
+}
 
-export default config;
+export default config
