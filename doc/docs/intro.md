@@ -2,46 +2,16 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the Hasty Server documentation! Hasty Server is a lightweight and fast web server framework for Node.js. It is designed to be simple and easy to use, making it ideal for building web applications and APIs.
 
-## Getting Started
+Hasty Server provides a minimalistic API that allows you to quickly set up a web server with minimal configuration. It supports routing, middleware, and other essential features for building web applications.
 
-Get started by **creating a new site**.
+Hasty Server has a built-in support for JSON as the JSON parser is included by default. It also supports middleware, which allows you to add custom functionality to your server.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+Hasty server is designed to be having zero dependencies and is built on top of the native Node.js net module. This makes it lightweight and fast, making it ideal for building high-performance web applications.
 
-### What you'll need
+In this documentation, you will learn how to get started with Hasty Server, set up routes, handle requests, and use middleware to add custom functionality to your server. You will also learn about the various features and methods provided by Hasty Server to help you build web applications and APIs.
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Check out the **[Quick Start](/docs/tutorial-basics/quick-start)** guide to get started with Hasty Server.
