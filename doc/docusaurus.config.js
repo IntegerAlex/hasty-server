@@ -44,7 +44,9 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/IntegerAlex/hasty-server.git/doc/'
+
+		'https://github.com/IntegerAlex/hasty-server/tree/master/doc',
+
         },
         blog: {
           showReadingTime: true,
