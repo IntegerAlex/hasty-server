@@ -21,7 +21,8 @@ const sidebars = {
     {
       type: 'category',
       label: 'Basic Documentation',
-      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start', 'tutorial-basics/hello-world-with-hasty-server',"tutorial-basics/response-object","tutorial-basics/cors"]   	},
+      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start', 'tutorial-basics/hello-world-with-hasty-server', 'tutorial-basics/response-object', 'tutorial-basics/cors']
+    },
 
 	  {
 		  type: 'category',
