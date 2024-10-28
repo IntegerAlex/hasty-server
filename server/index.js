@@ -9,18 +9,19 @@ function getSocket (callback, context) {
 }
 
 function handler (socket, context) {
-	 socket.on('data', (data) => {
+  socket.on('data', (data) => {
     const res = new Response(socket, context.enableCors) // Set up a new Response object with the socket and cors state
     const buff = data.toString() // Convert buffer data to string
-		 httpParser(buff)
+    httpParser(buff)
       .then((data) => {
         pathController(data, context, res)
       })
       .catch((error) => {
         console.error('Error parsing HTTP request:', error)
         res.sendStatus(400) // Send a Bad Request status
-      })
-  })
+        return null
+      });
+  });
 }
 
 function pathController (data, context, res) {
@@ -41,6 +42,7 @@ function pathController (data, context, res) {
     route.callback(data, res) // Pass the updated data with params
   } else {
     res.sendStatus(404) // Route not found
+    return null
   }
 }
 
@@ -120,7 +122,7 @@ class Hasty extends Server {
   }
 
   //  Enable CORS
-	  cors (enable) {
+  cors (enable) {
     this.enableCors = enable
   }
 
