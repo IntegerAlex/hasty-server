@@ -62,7 +62,7 @@ class Response {
       .join('\r\n')
   }
 
-  send(data) {
+  send (data) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -93,7 +93,7 @@ class Response {
     this.socket.end()
   }
 
-  json(data) {
+  json (data) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -166,7 +166,7 @@ class Response {
       stream.on('end', () => {
         this.socket.end()
       })
-    });
+    })
     return null
   }
 }

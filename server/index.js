@@ -1,5 +1,5 @@
 const { httpParser } = require('../lib/httpParser.js') // Import the httpParser function from the httpParser.js file
-const net = require('net') // Import the net module from Node.JS
+const net = require('net')// Import the net module from Node.JS
 const Response = require('./response.js') // Import the response object
 
 const { warn } = require('console')
@@ -14,7 +14,7 @@ function handler (socket, context) {
     const buff = data.toString() // Convert buffer data to string
     httpParser(buff)
       .then((data) => {
-        pathController(data, context, res);
+        pathController(data, context, res)
       })
       .catch((error) => {
         console.error('Error parsing HTTP request:', error)
@@ -109,7 +109,7 @@ class Server {
 class Hasty extends Server {
   constructor () {
     super()
-    this.enableCors = false; // default to false
+    this.enableCors = false // default to false
     this.socket.on('data', () => this.handler())
   }
 
