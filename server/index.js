@@ -29,7 +29,7 @@ function pathController (data, context, res) {
   const method = data.method
 
   // Find the matching route, accounting for parameters
-  const route = context.routes.find((route) => {
+  const route = context.routes.find(route => {
     return matchRouteWithParams(route.path, path) && route.method === method
   })
 
