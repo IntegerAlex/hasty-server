@@ -2,7 +2,7 @@ const fs = require('fs')
 const { lookupMimeType } = require('../lib/utils')
 const path = require('path')
 
-const STATUS_CODES = {
+const STATUS_CODES = Object.freeze({
   200: 'OK',
   201: 'Created',
   202: 'Accepted',
@@ -22,7 +22,7 @@ const STATUS_CODES = {
   500: 'Internal Server Error',
   501: 'Not Implemented',
   503: 'Service Unavailable'
-}
+})
 
 class Response {
   statusCode = 200
