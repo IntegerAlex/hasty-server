@@ -169,4 +169,6 @@ class Response {
   }
 }
 
+Response.STATUS_CODES = STATUS_CODES
+
 module.exports = Response
