@@ -1,5 +1,5 @@
 const net = require('net')
-const Hasty = require('../server/index') // Adjust the path as neededc
+const Hasty = require('../server/index') 
 const fs = require('fs')
 describe('Hasty Server', () => {
   let server
@@ -38,6 +38,7 @@ describe('Hasty Server', () => {
     })
   }, 5000) // Increase the timeout to 10 seconds
 
+  // 
   test('/GET json', done => {
     server = new Hasty()
     const callback = (req, res) => {
