@@ -1,5 +1,4 @@
 const Hasty = require("../server/index");
-const net = require("net");
 const fs = require("fs");
 const path = require("path");
 
@@ -39,6 +38,7 @@ describe("Hasty Server Extended Tests", () => {
         expect(response.status).toBe(201);
         expect(data).toEqual({ message: "Created" });
     } catch (error) {      
+      console.log("Error in chained response methods test:");
         throw error;
     } finally {
         // Ensure server is closed even if test fails
