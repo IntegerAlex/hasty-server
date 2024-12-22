@@ -9,7 +9,13 @@ function getSocket (callback, context) {
 }
 
 function handler (socket, context) {
-	 socket.on('data', (data) => {
+  socket.setTimeout(120000);
+  
+  socket.on('timeout', () => {
+    socket.end();
+  });
+  
+  socket.on('data', (data) => {
     const res = new Response(socket, context.enableCors) // Set up a new Response object with the socket and cors state
     const buff = data.toString() // Convert buffer data to string
 		 httpParser(buff)
