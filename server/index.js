@@ -26,18 +26,18 @@ function handler(socket, context) {
     socket.end();
   });
   
-  socket.on('data', (data) => {
-    const res = new Response(socket, context.enableCors) // Set up a new Response object with the socket and cors state
-    const buff = data.toString() // Convert buffer data to string
-		 httpParser(buff)
-      .then((data) => {
-        pathController(data, context, res)
+  socket.on('data', (rawData) => {
+    const res = new Response(socket, context.enableCors);
+    const buff = rawData.toString();
+    httpParser(buff)
+      .then((parsedData) => {
+        pathController(parsedData, context, res);
       })
       .catch((error) => {
-        console.error('Error parsing HTTP request:', error)
-        res.sendStatus(400) // Send a Bad Request status
-      })
-  })
+        console.error('Error parsing HTTP request:', error);
+        res.sendStatus(400);
+      });
+  });
 }
 
 /**
@@ -47,23 +47,21 @@ function handler(socket, context) {
  * @param {Object} res - Response object
  */
 function pathController(data, context, res) {
-  const path = data.path
-  const method = data.method
+  const requestPath = data.path;
+  const requestMethod = data.method;
 
   // Find the matching route, accounting for parameters
-  const route = context.routes.find(route => {
-    return matchRouteWithParams(route.path, path) && route.method === method
-  })
+  const matchedRoute = context.routes.find(routeConfig => {
+    return matchRouteWithParams(routeConfig.path, requestPath) && routeConfig.method === requestMethod;
+  });
 
-  if (route) {
+  if (matchedRoute) {
     // Extract parameters from the matched route
-    const params = extractParams(route.path, path)
-    // Log extracted params
-
-    data.params = params // Attach extracted params to data
-    route.callback(data, res) // Pass the updated data with params
+    const params = extractParams(matchedRoute.path, requestPath);
+    data.params = params;
+    matchedRoute.callback(data, res);
   } else {
-    res.sendStatus(404) // Route not found
+    res.sendStatus(404);
   }
 }
 
@@ -74,14 +72,14 @@ function pathController(data, context, res) {
  * @returns {boolean} Whether the paths match
  */
 function matchRouteWithParams(routePath, actualPath) {
-  const routeParts = routePath.split('/')
-  const pathParts = actualPath.split('/')
+  const routeParts = routePath.split('/');
+  const pathParts = actualPath.split('/');
 
-  if (routeParts.length !== pathParts.length) return false
+  if (routeParts.length !== pathParts.length) return false;
 
-  return routeParts.every((part, index) => {
-    return part.startsWith(':') || part === pathParts[index]
-  })
+  return routeParts.every((routePart, index) => {
+    return routePart.startsWith(':') || routePart === pathParts[index];
+  });
 }
 
 /**
@@ -91,18 +89,18 @@ function matchRouteWithParams(routePath, actualPath) {
  * @returns {Object} Extracted parameters
  */
 function extractParams(routePath, actualPath) {
-  const routeParts = routePath.split('/')
-  const pathParts = actualPath.split('/')
-  const params = {}
+  const routeParts = routePath.split('/');
+  const pathParts = actualPath.split('/');
+  const params = {};
 
-  routeParts.forEach((part, index) => {
-    if (part.startsWith(':')) {
-      const paramName = part.slice(1) // Remove the colon (:) from parameter name
-      params[paramName] = pathParts[index] // Assign actual path value
+  routeParts.forEach((routePart, index) => {
+    if (routePart.startsWith(':')) {
+      const paramName = routePart.slice(1);
+      params[paramName] = pathParts[index];
     }
-  })
+  });
 
-  return params
+  return params;
 }
 
 /**
