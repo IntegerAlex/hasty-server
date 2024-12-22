@@ -4,11 +4,22 @@ const Response = require('./response.js') // Import the response object
 
 const { warn } = require('console')
 
-function getSocket (callback, context) {
+/**
+ * Create a TCP server with a handler function
+ * @param {Function} callback - Handler function for socket events
+ * @param {Object} context - Server context object
+ * @returns {net.Server} TCP server instance
+ */
+function getSocket(callback, context) {
   return net.createServer(Socket => callback(Socket, context))
 }
 
-function handler (socket, context) {
+/**
+ * Handle incoming socket connections
+ * @param {net.Socket} socket - TCP socket connection
+ * @param {Object} context - Server context object
+ */
+function handler(socket, context) {
   socket.setTimeout(120000);
   
   socket.on('timeout', () => {
@@ -29,7 +40,13 @@ function handler (socket, context) {
   })
 }
 
-function pathController (data, context, res) {
+/**
+ * Handle routing of HTTP requests
+ * @param {Object} data - Parsed HTTP request data
+ * @param {Object} context - Server context object
+ * @param {Object} res - Response object
+ */
+function pathController(data, context, res) {
   const path = data.path
   const method = data.method
 
@@ -50,8 +67,13 @@ function pathController (data, context, res) {
   }
 }
 
-// Helper function to check if the route matches, including parameters
-function matchRouteWithParams (routePath, actualPath) {
+/**
+ * Check if a route path matches the actual path, including parameters
+ * @param {string} routePath - Route path pattern
+ * @param {string} actualPath - Actual request path
+ * @returns {boolean} Whether the paths match
+ */
+function matchRouteWithParams(routePath, actualPath) {
   const routeParts = routePath.split('/')
   const pathParts = actualPath.split('/')
 
@@ -62,8 +84,13 @@ function matchRouteWithParams (routePath, actualPath) {
   })
 }
 
-// Helper function to extract params from the matched route
-function extractParams (routePath, actualPath) {
+/**
+ * Extract parameters from a matched route
+ * @param {string} routePath - Route path pattern
+ * @param {string} actualPath - Actual request path
+ * @returns {Object} Extracted parameters
+ */
+function extractParams(routePath, actualPath) {
   const routeParts = routePath.split('/')
   const pathParts = actualPath.split('/')
   const params = {}
@@ -78,97 +105,137 @@ function extractParams (routePath, actualPath) {
   return params
 }
 
-// function pathController(data,context, socket) {
-//    const path = data.path;
-//	const  method = data.method
-//    console.log("pathController: " + method + ": " + path);
-//
-//
-//
-//
-//    // Check if the path exists in the context.routes
-//    const route = context.routes.find(route => route.path === path && route.method === method);
-//    if (route) route.callback(data, socket);
-//	  else socket.sendStatus(404);
-// }
-//
-
+/**
+ * Base Server class that handles TCP socket connections
+ * @class
+ */
 class Server {
-  socket
-  constructor () {
-    this.socket = getSocket(handler, this)
-    this.routes = []
+  socket;
+
+  /**
+   * Create a new Server instance
+   */
+  constructor() {
+    this.socket = getSocket(handler, this);
+    this.routes = [];
   }
 
-  listen (PORT, callback) {
-    this.socket.listen(PORT, callback)
+  /**
+   * Start the server on specified port
+   * @param {number} PORT - Port number to listen on
+   * @param {Function} callback - Callback function to execute when server starts
+   */
+  listen(PORT, callback) {
+    this.socket.listen(PORT, callback);
   }
 
-  close () {
-    this.socket.close()
-    warn('Server closed')
+  /**
+   * Close the server and all active connections
+   */
+  close() {
+    this.socket.close();
+    warn('Server closed');
   }
 }
 
+/**
+ * Hasty framework main class
+ * Extends base Server class with HTTP-specific functionality
+ * @extends Server
+ */
 class Hasty extends Server {
-  constructor () {
-    super()
-    this.enableCors = false // default to false
-    this.socket.on('data', () => this.handler())
+  constructor() {
+    super();
+    this.enableCors = false; // default to false
+    this.socket.on('data', () => this.handler());
   }
 
-  setRoute (method, object) {
-    const route = new Object()
-    route.callback = object.callback
-    route.path = object.path
-    route.method = method
-    this.routes.push(route)
+  /**
+   * Internal method to set route configuration
+   * @param {string} method - HTTP method (GET, POST, etc)
+   * @param {Object} object - Route configuration object
+   * @param {string} object.path - URL path for the route
+   * @param {Function} object.callback - Handler function for the route
+   * @private
+   */
+  setRoute(method, object) {
+    const route = new Object();
+    route.callback = object.callback;
+    route.path = object.path;
+    route.method = method;
+    this.routes.push(route);
   }
 
-  //  Enable CORS
-	  cors (enable) {
-    this.enableCors = enable
+  /**
+   * Enable or disable CORS support
+   * @param {boolean} enable - Whether to enable CORS
+   */
+  cors(enable) {
+    this.enableCors = enable;
   }
 
-  get (path, callback) {
-    this.setRoute('GET', { callback, path })
+  /**
+   * Register a GET route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  get(path, callback) {
+    this.setRoute('GET', { callback, path });
   }
 
-  post (path, callback) {
-    this.setRoute('POST', { callback, path })
+  /**
+   * Register a POST route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  post(path, callback) {
+    this.setRoute('POST', { callback, path });
   }
 
-  put (path, callback) {
-    this.setRoute('PUT', { callback, path })
+  /**
+   * Register a PUT route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  put(path, callback) {
+    this.setRoute('PUT', { callback, path });
   }
 
-  delete (path, callback) {
-    this.setRoute('DELETE', { callback, path })
+  /**
+   * Register a DELETE route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  delete(path, callback) {
+    this.setRoute('DELETE', { callback, path });
   }
 
-  patch (path, callback) {
-    this.setRoute('PATCH', { callback, path })
+  /**
+   * Register a PATCH route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  patch(path, callback) {
+    this.setRoute('PATCH', { callback, path });
   }
 
-  head (path, callback) {
-    this.setRoute('HEAD', { callback, path })
+  /**
+   * Register a HEAD route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  head(path, callback) {
+    this.setRoute('HEAD', { callback, path });
   }
 
-  options (path, callback) {
-    this.setRoute('OPTIONS', { callback, path })
+  /**
+   * Register an OPTIONS route
+   * @param {string} path - URL path
+   * @param {Function} callback - Route handler function
+   */
+  options(path, callback) {
+    this.setRoute('OPTIONS', { callback, path });
   }
 }
 
-module.exports = Hasty
-
-// const  routeHandler  = new RouteHandler()
-// routeHandler.get({callback:()=>{
-//	console.log("we are getting started")
-// },path:"/"})
-// routeHandler.setRoute("POST",{callback:()=>{},path:"/post"})
-// server.listen(8080,()=>{V
-//	console.log("server started");
-// })
-// routeHandler.listen(8080,()=>{
-// console.log("server started")
-// })
+module.exports = Hasty;
