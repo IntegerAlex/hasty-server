@@ -1,12 +1,20 @@
 const net = require('net')
 const Hasty = require('../server/index') // Adjust the path as neededc
 const fs = require('fs')
+
 describe('Hasty Server', () => {
   let server
+  const TEST_PORT = 3002
+
+  beforeEach(() => {
+    server = new Hasty()
+  })
+
+  afterEach(() => {
+    server.close()
+  })
 
   test('should call the correct callback for a GET request', done => {
-    server = new Hasty()
-
     // Mock response object
     const callback = (req, res) => {
       res.send('GET request received')
@@ -14,10 +22,10 @@ describe('Hasty Server', () => {
 
     server.get('/test', callback)
 
-    server.listen(3000, () => {
-      console.log('Server is listening on port 3000')
+    server.listen(TEST_PORT, () => {
+      console.log('Server is listening on port 3002')
 
-      const client = net.connect({ port: 3000 }, () => {
+      const client = net.connect({ port: TEST_PORT }, () => {
         client.write('GET /test HTTP/1.1\r\nHost: localhost\r\n\r\n')
       })
 
@@ -27,7 +35,6 @@ describe('Hasty Server', () => {
         // Assert that the response is what we expect
         expect(data.toString()).toContain('GET request received')
         client.end()
-        server.close()
         done()
       })
 
@@ -39,18 +46,16 @@ describe('Hasty Server', () => {
   }, 5000) // Increase the timeout to 10 seconds
 
   test('/GET json', done => {
-    server = new Hasty()
     const callback = (req, res) => {
       res.json({ message: 'GET request received' })
     }
     server.get('/json', callback)
-    server.listen(3000, () => {
-      fetch('http://localhost:3000/json')
+    server.listen(TEST_PORT, () => {
+      fetch(`http://localhost:${TEST_PORT}/json`)
         .then(response => {
           return response.json()
         }).then(data => {
           expect(data).toEqual({ message: 'GET request received' })
-          server.close()
           done()
         }).catch(err => {
           console.log(err)
@@ -59,16 +64,15 @@ describe('Hasty Server', () => {
   }, 5000) // Increase the timeout to 10 seconds
 
   test('/GET sendFile', done => {
-    const server = new Hasty()
     const callback = (req, res) => {
       const path = require('path')
       res.sendFile(path.join(__dirname, 'index.html'))
     }
 
     server.get('/file', callback)
-    server.listen(3000, () => {
+    server.listen(TEST_PORT, () => {
       const path = require('path')
-      fetch('http://localhost:3000/file')
+      fetch(`http://localhost:${TEST_PORT}/file`)
         .then(response => {
           // Check if the Content-Type header is as expected
           expect(response.headers.get('Content-Type')).toBe('text/html')
@@ -78,7 +82,6 @@ describe('Hasty Server', () => {
           const stream = fs.createReadStream(path.join(__dirname, 'index.html'))
           stream.on('data', chunk => {
             expect(data).toEqual(chunk.toString()) // Check the response body
-            server.close()
             done()
           })
           stream.on('error', err => {

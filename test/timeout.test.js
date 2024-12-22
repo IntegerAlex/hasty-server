@@ -1,8 +1,12 @@
 const Hasty = require('../server/index.js');
 const net = require('net');
 
+// Increase timeout for all tests in this file
+jest.setTimeout(150000); // 2.5 minutes to account for setup time
+
 describe('Hasty Server Timeout', () => {
     let server;
+    const TEST_PORT = 3001; // Use different port to avoid conflicts
     
     beforeAll(() => {
         server = new Hasty();
@@ -16,12 +20,9 @@ describe('Hasty Server Timeout', () => {
     });
 
     test('should timeout after 2 minutes of inactivity', done => {
-        // Increase timeout for this specific test
-        jest.setTimeout(150000); // 2.5 minutes to account for setup time
-        
         let serverStarted = false;
         
-        server.listen(3000, () => {
+        server.listen(TEST_PORT, () => {
             serverStarted = true;
         });
 
@@ -34,7 +35,7 @@ describe('Hasty Server Timeout', () => {
             const client = new net.Socket();
             const startTime = Date.now();
 
-            client.connect(3000, 'localhost', () => {
+            client.connect(TEST_PORT, 'localhost', () => {
                 // Connection established
             });
 
