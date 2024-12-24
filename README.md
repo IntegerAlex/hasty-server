@@ -1,6 +1,6 @@
 # Hastier Server
 
-A secure and modern Node.js HTTP server with enhanced security features, built on top of the original [Hasty Server](https://github.com/c4ist/hasty-server).
+A secure and modern Node.js HTTP server with enhanced security features, built on top of the original [Hasty Server](https://github.com/IntegerAlex/hasty-server).
 
 ## Features
 
@@ -120,7 +120,7 @@ npm test
 
 ## Credits
 
-This project is a security-enhanced fork of [Hasty Server](https://github.com/c4ist/hasty-server) by c4ist. The original project provided the foundation for a lightweight HTTP server, which we've built upon to add modern security features and improved error handling.
+This project is a security-enhanced fork of [Hasty Server](https://github.com/IntegerAlex/hasty-server) by IntegerAlex. The original project provided the foundation for a lightweight HTTP server, which we've built upon to add modern security features and improved error handling.
 
 ## License
 
