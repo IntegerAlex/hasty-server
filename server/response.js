@@ -46,6 +46,18 @@ class Response {
     return this
   }
 
+  /**
+   * Set multiple HTTP headers at once
+   * @param {Object} headers - Object containing header key-value pairs
+   * @param {string} headers.key - Header name (e.g., 'Content-Type')
+   * @param {string} headers.value - Header value (e.g., 'application/json')
+   * @returns {Response} Returns this for chaining
+   * @example
+   * response.setHeaders({
+   *   'Content-Type': 'application/json',
+   *   'X-Frame-Options': 'DENY'
+   * });
+   */
   setHeaders (headers) {
     for (const [key, value] of Object.entries(headers)) {
       this.headers[key] = value
