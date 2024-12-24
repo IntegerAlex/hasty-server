@@ -5,6 +5,49 @@ const Response = require('./response.js') // Import the response object
 const { warn } = require('console')
 
 /**
+ * Simple rate limiter implementation
+ */
+class RateLimiter {
+  constructor(windowMs = 60000, maxRequests = 100) {
+    this.windowMs = windowMs;
+    this.maxRequests = maxRequests;
+    this.clients = new Map();
+  }
+
+  /**
+   * Check if a client has exceeded their rate limit
+   * @param {string} clientIp - Client's IP address
+   * @returns {boolean} - Whether the client is rate limited
+   */
+  isRateLimited(clientIp) {
+    const now = Date.now();
+    const clientData = this.clients.get(clientIp) || { count: 0, resetTime: now + this.windowMs };
+
+    // Reset counter if window has passed
+    if (now >= clientData.resetTime) {
+      clientData.count = 0;
+      clientData.resetTime = now + this.windowMs;
+    }
+
+    clientData.count++;
+    this.clients.set(clientIp, clientData);
+
+    return clientData.count > this.maxRequests;
+  }
+}
+
+/**
+ * Default security headers for responses
+ */
+const securityHeaders = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'self'"
+};
+
+/**
  * Create a TCP server with a handler function
  * @param {Function} callback - Handler function for socket events
  * @param {Object} context - Server context object
@@ -20,6 +63,7 @@ function getSocket(callback, context) {
  * @param {Object} context - Server context object
  */
 function handler(socket, context) {
+  const rateLimiter = new RateLimiter();
   socket.setTimeout(120000);
   
   socket.on('timeout', () => {
@@ -27,7 +71,23 @@ function handler(socket, context) {
   });
   
   socket.on('data', (rawData) => {
+    const clientIp = socket.remoteAddress;
+    
+    // Check rate limit
+    if (rateLimiter.isRateLimited(clientIp)) {
+      const res = new Response(socket, context.enableCors);
+      res.setHeaders({
+        'Retry-After': '60',
+        ...securityHeaders
+      });
+      res.sendStatus(429); // Too Many Requests
+      return;
+    }
+
     const res = new Response(socket, context.enableCors);
+    // Add security headers to all responses
+    res.setHeaders(securityHeaders);
+    
     const buff = rawData.toString();
     httpParser(buff)
       .then((parsedData) => {
@@ -145,7 +205,6 @@ class Hasty extends Server {
   constructor() {
     super();
     this.enableCors = false; // default to false
-    this.socket.on('data', () => this.handler());
   }
 
   /**

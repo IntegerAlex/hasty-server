@@ -43,7 +43,7 @@ describe('Hasty Server Timeout', () => {
                 const duration = Date.now() - startTime;
                 
                 try {
-                    // Check if connection was closed around the 120000ms mark (2 minutes)
+                    // Check if connection was closed around 2 minute mark
                     expect(duration).toBeGreaterThanOrEqual(119000);
                     expect(duration).toBeLessThanOrEqual(121000);
                     done();
