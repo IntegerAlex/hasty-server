@@ -2,9 +2,28 @@ const fs = require('fs')
 const { lookupMimeType } = require('../lib/utils')
 const path = require('path')
 
+/**
+ * Response class for handling HTTP responses
+ * @class
+ * @description Handles HTTP response formatting, headers, and data sending
+ */
 class Response {
+  /**
+   * Default status code
+   * @type {number}
+   */
   statusCode = 200
-  enableCors = false // default to false
+
+  /**
+   * Enable CORS by default
+   * @type {boolean}
+   */
+  enableCors = false
+
+  /**
+   * Map of status codes to status text
+   * @type {Object}
+   */
   statusTextMap = {
     200: 'OK',
     201: 'Created',
@@ -27,13 +46,24 @@ class Response {
     503: 'Service Unavailable'
   }
 
-  constructor (socket, enableCors) {
+  /**
+   * Constructor for Response class
+   * @param {Object} socket - Socket object
+   * @param {boolean} enableCors - Enable CORS
+   */
+  constructor(socket, enableCors) {
     this.socket = socket
-    this.enableCors = enableCors // Set the cors state
+    this.enableCors = enableCors
     this.headers = {}
   }
 
-  status (code) {
+  /**
+   * Set response status code
+   * @param {number} code - HTTP status code
+   * @returns {Response} Returns this for chaining
+   * @throws {Error} If status code is invalid
+   */
+  status(code) {
     if (!this.statusTextMap[code]) {
       throw new Error(`Invalid status code: ${code}`)
     }
@@ -41,7 +71,13 @@ class Response {
     return this
   }
 
-  setHeader (key, value) {
+  /**
+   * Set a single response header
+   * @param {string} key - Header name
+   * @param {string} value - Header value
+   * @returns {Response} Returns this for chaining
+   */
+  setHeader(key, value) {
     this.headers[key] = value
     return this
   }
@@ -58,29 +94,30 @@ class Response {
    *   'X-Frame-Options': 'DENY'
    * });
    */
-  setHeaders (headers) {
+  setHeaders(headers) {
     for (const [key, value] of Object.entries(headers)) {
       this.headers[key] = value
     }
     return this
   }
 
-  // Set CORS headers
-  setCorsHeaders () {
-    if (this.enableCors) {
-      this.setHeader('Access-Control-Allow-Origin', '*')
-      this.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-      this.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    }
-  }
-
-  formatHeaders () {
+  /**
+   * Format all headers into string
+   * @private
+   * @returns {string} Formatted headers string
+   */
+  formatHeaders() {
     return Object.keys(this.headers)
       .map(key => `${key}: ${this.headers[key]}`)
       .join('\r\n')
   }
 
-  send (data) {
+  /**
+   * Send response data
+   * @param {string|Object} data - Response data to send
+   * @returns {void}
+   */
+  send(data) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -104,14 +141,24 @@ class Response {
     this.socket.end()
   }
 
-  sendStatus (statusCode) {
-    this.status(statusCode)
+  /**
+   * Send status code response
+   * @param {number} code - HTTP status code
+   * @returns {void}
+   */
+  sendStatus(code) {
+    this.status(code)
     const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
     this.socket.write(headers)
     this.socket.end()
   }
 
-  json (data) {
+  /**
+   * Send JSON response
+   * @param {Object} data - Data to send as JSON
+   * @returns {void}
+   */
+  json(data) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -123,7 +170,12 @@ class Response {
     this.socket.end()
   }
 
-  sendFile (file) {
+  /**
+   * Send file as response
+   * @param {string} file - Path to file
+   * @returns {void}
+   */
+  sendFile(file) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -154,7 +206,13 @@ class Response {
     })
   }
 
-  download (file, filename) {
+  /**
+   * Send file as downloadable attachment
+   * @param {string} file - Path to file
+   * @param {string} filename - Suggested filename for download
+   * @returns {void}
+   */
+  download(file, filename) {
     if (this.enableCors) {
       this.setCorsHeaders()
     }
@@ -184,6 +242,19 @@ class Response {
         this.socket.end()
       })
     })
+  }
+
+  /**
+   * Set CORS headers
+   * @private
+   * @returns {void}
+   */
+  setCorsHeaders() {
+    if (this.enableCors) {
+      this.setHeader('Access-Control-Allow-Origin', '*')
+      this.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+      this.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    }
   }
 }
 

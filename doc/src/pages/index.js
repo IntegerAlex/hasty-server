@@ -7,6 +7,10 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures'
 import Heading from '@theme/Heading'
 import styles from './index.module.css'
 
+/**
+ * Header component for the homepage
+ * @returns {JSX.Element} HomepageHeader component
+ */
 function HomepageHeader () {
   const { siteConfig } = useDocusaurusContext()
   return (
@@ -21,7 +25,7 @@ function HomepageHeader () {
             className='button button--secondary button--lg'
             to='/docs/intro'
           >
-            Hasty Server Documentation
+            Hasty Server Tutorial - 5min ⏱️
           </Link>
         </div>
       </div>
@@ -29,12 +33,16 @@ function HomepageHeader () {
   )
 }
 
+/**
+ * Home page component
+ * @returns {JSX.Element} Home page component
+ */
 export default function Home () {
   const { siteConfig } = useDocusaurusContext()
   return (
     <Layout
       title={`Hello from ${siteConfig.title}`}
-      description='Hasty server Documentation'
+      description='Description will go into a meta tag in <head />'
     >
       <HomepageHeader />
       <main>

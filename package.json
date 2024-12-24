@@ -34,5 +34,8 @@
   },
   "homepage": "https://hasty-server.vercel.app",
   "license": "GPL-3.0",
-  "description": "A  Blazing fast simple http server for node.js"
+  "description": "A  Blazing fast simple http server for node.js",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
