@@ -1,102 +1,127 @@
-# Hasty 
+# Hastier Server
 
-![NPM Version](https://img.shields.io/npm/v/hasty-server)
-![NPM Downloads](https://img.shields.io/npm/d18m/hasty-server)
-![NPM License](https://img.shields.io/npm/l/hasty-server)
+A secure and modern Node.js HTTP server with enhanced security features, built on top of the original [Hasty Server](https://github.com/c4ist/hasty-server).
 
-**🚫 Product Development is Currently On Hold 🚫**  
-We will provide updates as soon as we have more information. Thank you for your patience!
+## Features
 
-Hasty server is a simple web framework to build webserver  in a simple way. It is inspired by [Express.js](https://expressjs.com/).
-Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
+- **Enhanced Security**
+  - Rate limiting to prevent DoS attacks
+  - Security headers (XSS, CSRF, CSP)
+  - Path traversal protection
+  - CORS support
 
-###  table of contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Request Object](#request-object)
-- [Contributing](#contributing)
-- [CHANGELOG](CHANGELOG.md)
-- [LICENSE](LICENSE.md)
+- **Robust Error Handling**
+  - Custom error classes
+  - Detailed error messages
+  - Request validation
 
+- **Modern API Design**
+  - Express-like syntax
+  - Method chaining
+  - Async/await support
 
-### Note
+## Quick Start
 
-This is a work in progress and not ready for production. It is just a fun project to learn how HTTP works under the hood.
-
-### Installation
 ```bash
-npm install hasty-server
+# Clone the repository
+git clone https://github.com/c4ist/hastier-server.git
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
 ```
 
-### Usage  
- 
-**Common JS**
+## Usage Example
 
-```Javascript
-const Hasty = require('hasty-server');
-const  server = new  Hasty();
+```javascript
+const Server = require('./server');
+const server = new Server();
 
 server.get('/', (req, res) => {
-    res.send('Hello World');
+  res.json({ message: 'Welcome to Hastier Server!' });
 });
 
-server.listen(8080, () => {
-    console.log('Server is running on port 8080');
-});
-```
-    
-**ES6**
-
-```Javascript
-import Hasty from 'hasty-server';
-const  server = new  Hasty();
-
-server.get('/', (req, res) => {
-    res.send('Hello World');
-});
-
-server.listen(8080, () => {
-    console.log('Server is running on port 8080');
+server.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
 ```
 
-### Request Object
+## Security Features
 
-Some of the features in  `response object` are:
+### Rate Limiting
+Protects against DoS attacks by limiting clients to 100 requests per minute:
 
-- `send` : Send a response to the client.
-    - Usage: `res.send('Hello World')`
-
-- `json` : Send a JSON response to the client.
-    - Usage: `res.json({message: 'Hello World'})`
-
-- `status` : Set the status code of the response.
-    - Usage: `res.status(200)`
-    - Default status code is 200.
-    
-### Contributing
-
-If you would like to contribute to Hasty Server, you're welcome to:
-
- - Fork the repository.
- - Create a branch for your feature or bugfix.
- - Submit a pull request.
- - Please make sure to read the [contribution guidelines](CONTRIBUTING.md) for more details.
-
-Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
-
-### CHANGELOG
- -  v0.8.0 
-    - Added `download()` method to send file as an attachment.
-    - Added `server.cors(true)` to enable `cors`.
-
-For more information, see .
-[CHANGELOG](CHANGELOG.md)
-
-### LICENSE
-
-This project is licensed under GOFL (Global Opensource softwares Free License) and  GPL-v3 (General Public License) - see the [LICENSE](LICENSE.md) file for details.
-
+```javascript
+// Rate limiting is enabled by default
+const server = new Server({ rateLimit: true });
 ```
-All rights reserved to the author.
+
+### Security Headers
+All responses include essential security headers:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `X-XSS-Protection: 1; mode=block`
+- `Strict-Transport-Security: max-age=31536000; includeSubDomains`
+- `Content-Security-Policy: default-src 'self'`
+
+### CORS Support
+Built-in CORS support with customizable options:
+
+```javascript
+const server = new Server({
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 ```
+
+## API Documentation
+
+### Server Class
+```javascript
+const server = new Server(options);
+```
+
+Options:
+- `rateLimit`: Enable rate limiting (default: true)
+- `cors`: CORS configuration object
+- `port`: Server port (default: 3000)
+
+### Response Methods
+- `res.send(data)`: Send text/HTML response
+- `res.json(data)`: Send JSON response
+- `res.sendFile(path)`: Send file response
+- `res.sendStatus(code)`: Send status code
+- `res.setHeaders(headers)`: Set multiple headers
+
+### Request Properties
+- `req.method`: HTTP method
+- `req.path`: Request path
+- `req.headers`: Request headers
+- `req.body`: Parsed request body
+- `req.query`: Parsed query parameters
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Testing
+
+```bash
+npm test
+```
+
+## Credits
+
+This project is a security-enhanced fork of [Hasty Server](https://github.com/c4ist/hasty-server) by c4ist. The original project provided the foundation for a lightweight HTTP server, which we've built upon to add modern security features and improved error handling.
+
+## License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
