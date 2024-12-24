@@ -46,8 +46,15 @@ class Response {
     return this
   }
 
+  setHeaders (headers) {
+    for (const [key, value] of Object.entries(headers)) {
+      this.headers[key] = value
+    }
+    return this
+  }
+
   // Set CORS headers
-	  setCorsHeaders () {
+  setCorsHeaders () {
     if (this.enableCors) {
       this.setHeader('Access-Control-Allow-Origin', '*')
       this.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -62,7 +69,7 @@ class Response {
   }
 
   send (data) {
-   	if (this.enableCors) {
+    if (this.enableCors) {
       this.setCorsHeaders()
     }
     // Set Content-Type based on the type of data being sent
@@ -93,9 +100,9 @@ class Response {
   }
 
   json (data) {
-	    if (this.enableCors) {
+    if (this.enableCors) {
       this.setCorsHeaders()
-	    }
+    }
     const body = JSON.stringify(data)
     this.setHeader('Content-Type', 'application/json')
     this.setHeader('Content-Length', Buffer.byteLength(body))
@@ -105,9 +112,9 @@ class Response {
   }
 
   sendFile (file) {
-	    if (this.enableCors) {
+    if (this.enableCors) {
       this.setCorsHeaders()
-	    }
+    }
     const mimeType = lookupMimeType(path.extname(file).slice(1))
     this.setHeader('Content-Type', mimeType)
 
