@@ -124,4 +124,4 @@ This project is a security-enhanced fork of [Hasty Server](https://github.com/In
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under GOFL (Global Opensource softwares Free License) - see the [LICENSE](LICENSE.md)
