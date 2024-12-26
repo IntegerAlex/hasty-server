@@ -2,7 +2,6 @@ const fs = require('fs')
 const { lookupMimeType } = require('../lib/utils')
 const path = require('path')
 
-
 const STATUS_CODES = Object.freeze({
   200: 'OK',
   201: 'Created',
@@ -25,16 +24,15 @@ const STATUS_CODES = Object.freeze({
   503: 'Service Unavailable'
 })
 
-
 /**
  * Response class for handling HTTP responses.
- * 
+ *
  * @class Response
- * 
+ *
  * @param {Socket} socket - The socket object for the response.
  * @param {boolean} enableCors - Enable Cross-Origin Resource Sharing (CORS).
  * @param {string} statusTextMap - Map of status codes to status texts.
- * @example 
+ * @example
  * ```javascript
 const Response = require('./response.js');
 
@@ -68,7 +66,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {number} code - The HTTP status code.
    * @returns - The Response instance.
    */
@@ -81,7 +79,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {string} key - The header key.
    * @param {string} value - The header value.
    * @returns - The Response instance.
@@ -113,7 +111,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {string} data - The data to send.
    * @returns - If the data is an object or array, send as JSON
    */
@@ -142,7 +140,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {number} statusCode - The HTTP status code.
    * Updates the status code and sends the status code as a response.
    */
@@ -154,7 +152,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {*} data - The data to send.
    */
   json (data) {
@@ -170,7 +168,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {*} file - The file to send.
    */
   sendFile (file) {
@@ -205,7 +203,7 @@ class Response {
   }
 
   /**
-   * 
+   *
    * @param {*} file - The file to send.
    * @param {*} filename - The filename to send.
    */
