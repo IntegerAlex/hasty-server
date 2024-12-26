@@ -2,6 +2,30 @@ const fs = require('fs')
 const { lookupMimeType } = require('../lib/utils')
 const path = require('path')
 
+
+const STATUS_CODES = Object.freeze({
+  200: 'OK',
+  201: 'Created',
+  202: 'Accepted',
+  204: 'No Content',
+  301: 'Moved Permanently',
+  302: 'Found',
+  303: 'See Other',
+  304: 'Not Modified',
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  406: 'Not Acceptable',
+  409: 'Conflict',
+  417: 'Expectation Failed',
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  503: 'Service Unavailable'
+})
+
+
 /**
  * Response class for handling HTTP responses.
  * 
@@ -27,30 +51,10 @@ response.download('/path/to/file.txt', 'download.txt');
 response.sendFile('/path/to/image.png');
 ```
  */
+
 class Response {
   statusCode = 200
   enableCors = false // default to false
-  statusTextMap = {
-    200: 'OK',
-    201: 'Created',
-    202: 'Accepted',
-    204: 'No Content',
-    301: 'Moved Permanently',
-    302: 'Found',
-    303: 'See Other',
-    304: 'Not Modified',
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    405: 'Method Not Allowed',
-    406: 'Not Acceptable',
-    409: 'Conflict',
-    417: 'Expectation Failed',
-    500: 'Internal Server Error',
-    501: 'Not Implemented',
-    503: 'Service Unavailable'
-  }
 
   /**
    * Create a new Response instance.
@@ -69,7 +73,7 @@ class Response {
    * @returns - The Response instance.
    */
   status (code) {
-    if (!this.statusTextMap[code]) {
+    if (!STATUS_CODES[code]) {
       throw new Error(`Invalid status code: ${code}`)
     }
     this.statusCode = code
@@ -132,7 +136,7 @@ class Response {
 
     this.setHeader('Content-Length', Buffer.byteLength(data))
 
-    const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
+    const headers = `HTTP/1.1 ${this.statusCode} ${STATUS_CODES[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
     this.socket.write(headers + data)
     this.socket.end()
   }
@@ -144,7 +148,7 @@ class Response {
    */
   sendStatus (statusCode) {
     this.status(statusCode)
-    const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
+    const headers = `HTTP/1.1 ${this.statusCode} ${STATUS_CODES[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
     this.socket.write(headers)
     this.socket.end()
   }
@@ -160,7 +164,7 @@ class Response {
     const body = JSON.stringify(data)
     this.setHeader('Content-Type', 'application/json')
     this.setHeader('Content-Length', Buffer.byteLength(body))
-    const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
+    const headers = `HTTP/1.1 ${this.statusCode} ${STATUS_CODES[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
     this.socket.write(headers + body)
     this.socket.end()
   }
@@ -184,7 +188,7 @@ class Response {
 
       this.setHeader('Content-Length', stats.size)
 
-      const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
+      const headers = `HTTP/1.1 ${this.statusCode} ${STATUS_CODES[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
       this.socket.write(headers)
 
       const stream = fs.createReadStream(file)
@@ -221,7 +225,7 @@ class Response {
 
       this.setHeader('Content-Length', stats.size)
 
-      const headers = `HTTP/1.1 ${this.statusCode} ${this.statusTextMap[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
+      const headers = `HTTP/1.1 ${this.statusCode} ${STATUS_CODES[this.statusCode]}\r\n${this.formatHeaders()}\r\n\r\n`
       this.socket.write(headers)
 
       const stream = fs.createReadStream(file)
@@ -237,5 +241,7 @@ class Response {
     })
   }
 }
+
+Response.STATUS_CODES = STATUS_CODES
 
 module.exports = Response
