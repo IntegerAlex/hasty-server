@@ -3,9 +3,8 @@
 ![NPM Version](https://img.shields.io/npm/v/hasty-server)
 ![NPM Downloads](https://img.shields.io/npm/d18m/hasty-server)
 ![NPM License](https://img.shields.io/npm/l/hasty-server)
-
-**🚫 Product Development is Currently On Hold 🚫**  
-We will provide updates as soon as we have more information. Thank you for your patience!
+ 
+**Help needed**: I am looking for contributors to help me with this project. If you are interested, please let me know.
 
 Hasty server is a simple web framework to build webserver  in a simple way. It is inspired by [Express.js](https://expressjs.com/).
 Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
@@ -95,7 +94,7 @@ For more information, see .
 
 ### LICENSE
 
-This project is licensed under GOFL (Global Opensource softwares Free License) and  GPL-v3 (General Public License) - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under GOFL (Global Opensource softwares Free License) - see the [LICENSE](LICENSE.md) file for details.
 
 ```
 All rights reserved to the author.
