@@ -20,9 +20,10 @@ const sidebars = {
   docSidebar: [
     {
       type: 'category',
-      label: 'Tutorial',
-      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start', 'tutorial-basics/hello-world-with-hasty-server']
+      label: 'Basic Documentation',
+      items: ['tutorial-basics/Installation', 'tutorial-basics/quick-start', 'tutorial-basics/hello-world-with-hasty-server', 'tutorial-basics/response-object', 'tutorial-basics/cors']
     },
+
 	  {
 		  type: 'category',
 		  label: 'API for Developers',
