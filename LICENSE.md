@@ -28,8 +28,12 @@ This license establishes a framework for open-source software distribution, ensu
   - Clearly state any significant modifications made in derivative versions.
 
 2.2 Attribution must include the following notice:  
-  _"This software is based on work by Akshat Kotpalliwar (alias IntegerAlex on GitHub), licensed under the GOFL."_
-
+    _"This software is based on work by Akshat Kotpalliwar (alias IntegerAlex on GitHub), licensed under the GOFL."_
+  
+This notice must be prominently displayed in:
+ - Source code file headers
+ - Project documentation (README.md or similar)
+ - User interface "About" or credits section (if applicable)
 ---
 
 #### 3. PERMISSIONS
@@ -69,7 +73,10 @@ This license establishes a framework for open-source software distribution, ensu
 7.2 Redistribution of modified versions requires a prominent notice outlining the changes made, along with the date and nature of those changes.  
 
 Example Notice:  
-_This software has been modified by [Your Name] on [Date]. Changes include [brief description of changes]._
+```
+ This software has been modified by [Your Name] on [Date].
+ Changes include [brief description of changes].
+```
 
 7.3 Modified versions must include a disclaimer stating that the original author is not responsible for changes made in derivative works.
 
