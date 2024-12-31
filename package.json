@@ -1,6 +1,6 @@
 {
   "name": "hasty-server",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "main": "./server/index.js",
   "directories": {
     "lib": "lib",
