@@ -1,5 +1,5 @@
 # Hasty 
-
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/IntegerAlex/hasty-server/badge)](https://scorecard.dev/viewer/?uri=github.com/IntegerAlex/hasty-server)
 ![NPM Version](https://img.shields.io/npm/v/hasty-server)
 ![NPM Downloads](https://img.shields.io/npm/d18m/hasty-server)
 ![NPM License](https://img.shields.io/npm/l/hasty-server)
