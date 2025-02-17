@@ -15,7 +15,13 @@ on:
     branches: [ "master" ]
 
 # Declare default permissions as read only.
-permissions: read-all
+
+permissions:
+  contents: read
+  actions: write
+  security-events: write
+  id-token: write   # <-- This is the crucial permission for publishing results
+
 
 jobs:
   analysis:
