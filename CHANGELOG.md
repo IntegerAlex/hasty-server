@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.3] - 2025-03-04
+### Fixed
+- Fixed the issue of res.end() 
+
+## [0.9.3] - 2025-03-04
+### Fixed
+- Added Headers in response objects
+
 ## [0.9.0] - 2024-12-31
 ### Fixed
 - minor bug fixes

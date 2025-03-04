@@ -244,6 +244,9 @@ class Response {
     })
     return null
   }
+	end () {
+    this.socket.end()
+  }
 }
 
 Response.STATUS_CODES = STATUS_CODES
