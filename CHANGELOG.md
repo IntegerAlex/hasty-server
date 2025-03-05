@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.5] - 2025-03-06
+### Added
+- Added 'OPTIONS' method to handle preflight requests for CORS.
+
+## [0.9.4] - 2025-03-05
+### Added 
+- Added req.ip to get the IP address of the client. 
+
 ## [0.9.3] - 2025-03-04
 ### Fixed
 - Fixed the issue of res.end() 
