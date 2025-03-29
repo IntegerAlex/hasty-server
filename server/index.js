@@ -5,11 +5,11 @@ const Response = require('./response.js') // Import the response object
 const { warn } = require('console')
 
 /**
- * 
+ *
  * @param {Function} callback - The callback function to handle incoming connections.
  * @param {Object} context - The context object containing the server configuration.
  * @returns A server socket object.
- * 
+ *
  * @example
  * ```javascript
  * const server = getSocket(handler, {
@@ -28,12 +28,11 @@ function getSocket (callback, context) {
   return net.createServer(Socket => callback(Socket, context))
 }
 
-
 /**
- * 
+ *
  * @param {Socket} socket - The socket object for the response.
  * @param {Object} context - The context object containing the server configuration.
- * @returns A server socket object. 
+ * @returns A server socket object.
  */
 function handler (socket, context) {
   socket.on('data', (data) => {
@@ -152,7 +151,7 @@ function extractParams (routePath, actualPath) {
  */
 class Server {
   socket
-    /**
+  /**
    * Creates a new Server instance
    * @constructor
    */
@@ -163,7 +162,7 @@ class Server {
      * @private
      */
     this.socket = getSocket(handler, this)
-     /**
+    /**
      * Array of routes registered with the server
      * @type {Array}
      * @private
@@ -171,7 +170,7 @@ class Server {
     this.routes = []
   }
 
-   /**
+  /**
    * Starts the server listening on specified port
    * @param {number} PORT - The port number to listen on
    * @param {Function} callback - Callback function to execute when server starts listening
@@ -188,16 +187,16 @@ class Server {
 }
 
 class Hasty extends Server {
-   /**
+  /**
    * Creates a new Hasty server instance
    * @constructor
    */
   constructor () {
     super()
-     /**
+    /**
      * Collection of middleware functions
      * @type {Array<Function>}
-     * @private 
+     * @private
      */
     this.enableCors = false // default to false
     /**
@@ -228,11 +227,12 @@ class Hasty extends Server {
   cors (enable) {
     this.enableCors = enable
   }
+
   /**
    * GET
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   get (path, callback) {
     this.setRoute('GET', { callback, path })
@@ -240,9 +240,9 @@ class Hasty extends Server {
 
   /**
    * POST
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   post (path, callback) {
     this.setRoute('POST', { callback, path })
@@ -250,9 +250,9 @@ class Hasty extends Server {
 
   /**
    * PUT
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   put (path, callback) {
     this.setRoute('PUT', { callback, path })
@@ -260,9 +260,9 @@ class Hasty extends Server {
 
   /**
    * DELETE
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   delete (path, callback) {
     this.setRoute('DELETE', { callback, path })
@@ -270,9 +270,9 @@ class Hasty extends Server {
 
   /**
    * PATCH
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   patch (path, callback) {
     this.setRoute('PATCH', { callback, path })
@@ -280,9 +280,9 @@ class Hasty extends Server {
 
   /**
    * HEAD
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   head (path, callback) {
     this.setRoute('HEAD', { callback, path })
@@ -290,9 +290,9 @@ class Hasty extends Server {
 
   /**
    * OPTIONS
-   * 
-   * @param {string} path 
-   * @param {Function} callback 
+   *
+   * @param {string} path
+   * @param {Function} callback
    */
   options (path, callback) {
     this.setRoute('OPTIONS', { callback, path })
