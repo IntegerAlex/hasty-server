@@ -1,6 +1,6 @@
 /**
  * Sidebar configuration for Hasty Server documentation
- * 
+ *
  * This file defines the navigation structure for the documentation site.
  * The sidebar is organized into logical sections for easy navigation.
  */
@@ -18,10 +18,10 @@ const sidebars = {
       collapsible: true,
       collapsed: false,
       items: [
-        'getting-started/quick-start',
-      ],
+        'getting-started/quick-start'
+      ]
     },
-    
+
     // Guides section
     {
       type: 'category',
@@ -33,13 +33,13 @@ const sidebars = {
         'guides/middleware',
         'guides/static-files',
         'guides/error-handling',
-        'guides/limitations',
-      ],
+        'guides/limitations'
+      ]
     },
-    
-    // Additional standalone pages
-    'index',
-  ],
-};
 
-export default sidebars;
+    // Additional standalone pages
+    'index'
+  ]
+}
+
+export default sidebars
