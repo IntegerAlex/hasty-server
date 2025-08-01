@@ -1,10 +1,12 @@
 // @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
+import { themes as prismThemes } from 'prism-react-renderer';
 
-import { themes as prismThemes } from 'prism-react-renderer'
+// Custom color palette
+const primaryColor = '#4f46e5'; // Indigo
+const secondaryColor = '#7c3aed'; // Violet
+const accentColor = '#10b981'; // Emerald
+const darkBackground = '#0f172a'; // Dark blue-gray
+const lightBackground = '#f8fafc'; // Light blue-gray
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -70,11 +72,125 @@ const config = {
     ]
   ],
 
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+  themeConfig: {
+    // Custom color mode configuration
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
+    },
+    // Animation configuration
+    announcementBar: {
+      id: 'welcome',
+      content: '🚀 Welcome to Hasty Server Docs! Explore and build amazing web servers.',
+      backgroundColor: primaryColor,
+      textColor: '#ffffff',
+      isCloseable: true,
+    },
+    navbar: {
+      title: 'Hasty Server',
+      logo: {
+        alt: 'Hasty Server Logo',
+        src: 'img/logo.svg',
+      },
+      items: [
+        {
+          type: 'doc',
+          docId: 'getting-started',
+          position: 'left',
+          label: 'Docs',
+        },
+        {
+          to: '/api-reference',
+          position: 'left',
+          label: 'API',
+        },
+        {
+          href: 'https://github.com/IntegerAlex/hasty-server',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
+        },
+      ],
+      style: 'dark',
+    },
+    footer: {
+      style: 'dark',
+      links: [
+        {
+          title: 'Docs',
+          items: [
+            {
+              label: 'Getting Started',
+              to: '/docs/getting-started',
+            },
+            {
+              label: 'API Reference',
+              to: '/docs/api-reference',
+            },
+          ],
+        },
+        {
+          title: 'Community',
+          items: [
+            {
+              label: 'GitHub',
+              href: 'https://github.com/IntegerAlex/hasty-server',
+            },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'Blog',
+              to: '/blog',
+            },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/IntegerAlex/hasty-server',
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} Hasty Server. Built with Docusaurus.`,
+    },
+    prism: {
+      theme: {
+        ...prismThemes.github,
+        plain: {
+          ...prismThemes.github.plain,
+          backgroundColor: '#f8fafc',
+        },
+      },
+      darkTheme: {
+        ...prismThemes.dracula,
+        plain: {
+          ...prismThemes.dracula.plain,
+          backgroundColor: '#1e293b',
+        },
+      },
+      additionalLanguages: ['http', 'bash', 'json'],
+    },
+    // Custom docs configuration
+    docs: {
+      sidebar: {
+        hideable: true,
+        autoCollapseCategories: true,
+      },
+    },
+    // Custom CSS variables for theming
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
+    },
+    // Custom CSS variables
+    customCss: [
+      require.resolve('./src/css/custom.css'),
+    ],
+    // Metadata for social cards
+    image: 'img/social-card.png',
       navbar: {
         title: 'Hasty Server',
         // logo: {
