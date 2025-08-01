@@ -1,6 +1,6 @@
 /**
  * Sidebar configuration for Hasty Server documentation
- * 
+ *
  * This file defines the navigation structure for the documentation site.
  * The sidebar is organized into logical sections for easy navigation.
  */
@@ -21,10 +21,10 @@ const sidebars = {
         'getting-started/quick-start',
         'getting-started/installation',
         'getting-started/hello-world',
-        'getting-started/configuration',
-      ],
+        'getting-started/configuration'
+      ]
     },
-    
+
     // Guides section
     {
       type: 'category',
@@ -41,10 +41,10 @@ const sidebars = {
         'guides/testing',
         'guides/deployment',
         'guides/performance',
-        'guides/security',
-      ],
+        'guides/security'
+      ]
     },
-    
+
     // API Reference section
     {
       type: 'category',
@@ -56,10 +56,10 @@ const sidebars = {
         'api/request',
         'api/response',
         'api/router',
-        'api/middleware',
-      ],
+        'api/middleware'
+      ]
     },
-    
+
     // Examples section
     {
       type: 'category',
@@ -71,10 +71,10 @@ const sidebars = {
         'examples/authentication',
         'examples/file-uploads',
         'examples/websockets',
-        'examples/real-time-app',
-      ],
+        'examples/real-time-app'
+      ]
     },
-    
+
     // Advanced Topics
     {
       type: 'category',
@@ -86,10 +86,10 @@ const sidebars = {
         'advanced/streaming',
         'advanced/compression',
         'advanced/clustering',
-        'advanced/plugins',
-      ],
+        'advanced/plugins'
+      ]
     },
-    
+
     // Community & Support
     {
       type: 'category',
@@ -100,10 +100,10 @@ const sidebars = {
         'community/contributing',
         'community/code-of-conduct',
         'community/faq',
-        'community/showcase',
-      ],
+        'community/showcase'
+      ]
     },
-    
+
     // Troubleshooting
     {
       type: 'category',
@@ -114,19 +114,19 @@ const sidebars = {
         'troubleshooting/common-issues',
         'troubleshooting/debugging',
         'troubleshooting/performance-issues',
-        'troubleshooting/security-issues',
-      ],
-    },
+        'troubleshooting/security-issues'
+      ]
+    }
   ],
-  
+
   // API Reference sidebar (for API pages)
   apiSidebar: [
     'api/application',
     'api/request',
     'api/response',
     'api/router',
-    'api/middleware',
-  ],
-};
+    'api/middleware'
+  ]
+}
 
-export default sidebars;
+export default sidebars
