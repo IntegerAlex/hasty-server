@@ -30,7 +30,7 @@ const sidebars = {
       collapsed: true,
       items: [
         'guides/routing',
-        'guides/middleware',
+
         'guides/static-files',
         'guides/error-handling',
         'guides/limitations',

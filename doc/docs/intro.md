@@ -64,9 +64,9 @@ app.listen(3000, () => {
 
 1. **[Quick Start](./getting-started/quick-start)** - Get up and running in minutes
 2. **[Routing Guide](./guides/routing)** - Understand route handling and parameters
-3. **[Static Files](./guides/static-files)** - Learn about serving static assets
-4. **[Error Handling](./guides/error-handling)** - Handle errors gracefully
-5. **[Limitations](./guides/limitations)** - Understand what Hasty Server does NOT support
+3. **[Static Files Guide](./guides/static-files)** - Learn about serving static assets
+4. **[Error Handling Guide](./guides/error-handling)** - Handle errors gracefully
+5. **[Limitations Guide](./guides/limitations)** - Understand what Hasty Server does NOT support
 
 ## 🔧 Technical Overview
 
@@ -110,6 +110,12 @@ Hasty Server provides transparent implementation of:
 ## 🚀 Next Steps
 
 Ready to dive deeper? Start with our [Quick Start Guide](./getting-started/quick-start) to get your first Hasty Server running in under 5 minutes!
+
+Then explore:
+- [Routing Guide](./guides/routing) - Understand route handling
+- [Static Files Guide](./guides/static-files) - Learn about serving static assets
+- [Error Handling Guide](./guides/error-handling) - Handle errors gracefully
+- [Limitations Guide](./guides/limitations) - Understand what Hasty Server does NOT support
 
 ---
 

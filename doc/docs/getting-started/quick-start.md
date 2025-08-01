@@ -183,16 +183,14 @@ app.static('assets', { prefix: '/static' });
 
 ## Next Steps
 
-- Learn more about [Routing](/docs/guides/routing)
-- Explore the [API Reference](/docs/api)
-- Check out [Example Applications](/docs/examples)
-- Learn about [Deployment](/docs/guides/deployment)
-- Read about [Best Practices](/docs/guides/best-practices)
+- Learn more about [Routing Guide](../guides/routing.md)
+- Explore [Static Files Guide](../guides/static-files.md)
+- Understand [Error Handling](../guides/error-handling.md)
+- Read about [Limitations](../guides/limitations.md)
 
 ## Need Help?
 
 If you run into any issues or have questions:
 
-1. Check the [Troubleshooting](/docs/troubleshooting) guide
-2. Search the [GitHub Issues](https://github.com/yourusername/hasty-server/issues)
-3. [Open a new issue](https://github.com/yourusername/hasty-server/issues/new) if you can't find an answer
+1. Search the [GitHub Issues](https://github.com/IntegerAlex/hasty-server/issues)
+2. [Open a new issue](https://github.com/IntegerAlex/hasty-server/issues/new) if you can't find an answer

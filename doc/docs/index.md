@@ -12,8 +12,8 @@ docs: true
     <h1>Build Fast. Learn More.</h1>
     <p class="subtitle">A lightweight, educational HTTP server framework built with Node.js</p>
     <div class="cta-buttons">
-      <a href="/docs/getting-started/quick-start" class="button button--primary">Get Started</a>
-      <a href="/docs/guides/why-hasty" class="button button--secondary">Why Hasty?</a>
+      <a href="./getting-started/quick-start" class="button button--primary">Get Started</a>
+      <a href="./guides" class="button button--secondary">Explore the Docs</a>
     </div>
   </div>
 </div>
@@ -31,11 +31,33 @@ docs: true
   </div>
   <div class="feature">
     <h3>🔌 Extensible</h3>
-    <p>Middleware support and easy to extend for your specific needs.</p>
+    <p>Middleware support- **Educational**: Designed for learning HTTP server fundamentals.</p>
   </div>
   <div class="feature">
     <h3>🛠️ Zero Dependencies</h3>
     <p>Built with pure Node.js, no external dependencies required.</p>
+  </div>
+</div>
+
+## Explore the Docs
+
+<div class="doc-grid">
+  <div class="doc-card">
+    <h4>📚 Guides</h4>
+    <p>Learn how to use Hasty Server effectively</p>
+    <a href="./guides/routing">Routing Guide →</a>
+  </div>
+  
+  <div class="doc-card">
+    <h4>📁 Static Files</h4>
+    <p>Serve static assets with Hasty Server</p>
+    <a href="./guides/static-files">Static Files →</a>
+  </div>
+  
+  <div class="doc-card">
+    <h4>⚠️ Limitations</h4>
+    <p>Understand what Hasty Server does NOT support</p>
+    <a href="./guides/limitations">Limitations →</a>
   </div>
 </div>
 
@@ -50,7 +72,7 @@ const Hasty = require('hasty-server');
 const app = new Hasty();
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Hello, Hasty Server!' });
+  res.json({ message: 'Hello from Hasty Server!' });
 });
 
 app.listen(3000);
@@ -60,17 +82,17 @@ app.listen(3000);
 
 - **Core HTTP Server**: Built on Node.js native `http` module
 - **Routing**: Simple and intuitive route definitions
-- **Middleware**: Powerful middleware support
+- **Educational**: Designed for learning HTTP server fundamentals
 - **Static Files**: Built-in static file serving
 - **CORS**: Easy CORS configuration
 - **Error Handling**: Robust error handling patterns
 
 ## Get Started
 
-- [Quick Start](/docs/getting-started/quick-start) - Get up and running in minutes
-- [Guides](/docs/guides) - Learn through practical examples
-- [API Reference](/docs/api) - Detailed API documentation
-- [Examples](/docs/examples) - Ready-to-run example applications
+- [Quick Start](./getting-started/quick-start) - Get up and running in minutes
+- [Routing Guide](./guides/routing) - Understand route handling
+- [Static Files Guide](./guides/static-files) - Serve static assets
+- [Limitations Guide](./guides/limitations) - Understand what Hasty Server does NOT support
 
 ## Community
 
