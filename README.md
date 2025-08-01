@@ -11,6 +11,7 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 
 ###  table of contents
 - [Installation](#installation)
+- [Module Support](#module-support)
 - [Usage](#usage)
 - [Request Object](#request-object)
 - [Contributing](#contributing)
@@ -27,8 +28,46 @@ This is a work in progress and not ready for production. It is just a fun projec
 npm install hasty-server
 ```
 
+### Module Support
+
+Hasty Server supports multiple module systems for maximum compatibility:
+
+#### ✅ CommonJS (Default)
+
+```javascript
+const Hasty = require('hasty-server');
+const server = new Hasty();
+```
+
+#### ✅ ES Modules (ESM)
+
+```javascript
+import Hasty from 'hasty-server';
+const server = new Hasty();
+```
+
+#### ✅ TypeScript
+
+```typescript
+import Hasty, { Request, Response } from 'hasty-server';
+
+const server = new Hasty();
+
+server.get('/', (req: Request, res: Response) => {
+    res.json({ message: 'Hello from TypeScript!' });
+});
+```
+
+#### ✅ Dual Package Support
+
+The framework automatically detects your module system and provides the appropriate format:
+
+- **CommonJS projects**: Uses `.js` files
+- **ESM projects**: Uses `.mjs` files  
+- **TypeScript projects**: Uses `.d.ts` type definitions
+
 ### Usage  
- 
+
 **Common JS**
 
 ```Javascript
@@ -59,6 +98,27 @@ server.listen(8080, () => {
 });
 ```
 
+**TypeScript**
+
+```typescript
+import Hasty, { Request, Response } from 'hasty-server';
+
+const server = new Hasty();
+
+server.get('/', (req: Request, res: Response) => {
+    res.json({ message: 'Hello from TypeScript!' });
+});
+
+server.post('/api/users', (req: Request, res: Response) => {
+    const userData = req.body;
+    res.status(201).json({ id: 1, ...userData });
+});
+
+server.listen(8080, () => {
+    console.log('TypeScript server running on port 8080');
+});
+```
+
 ### Request Object
 
 Some of the features in  `response object` are:
@@ -85,17 +145,16 @@ If you would like to contribute to Hasty Server, you're welcome to:
 Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
 
 ### CHANGELOG
- -  v0.8.0 
-    - Added `download()` method to send file as an attachment.
-    - Added `server.cors(true)` to enable `cors`.
+ -  v0.9.6 
+    - Added comprehensive module support (CommonJS, ESM, TypeScript)
+    - Added dual package support with automatic module detection
+
 
 For more information, see .
 [CHANGELOG](CHANGELOG.md)
 
 ### LICENSE
 
-This project is licensed under GOFL (Global Opensource softwares Free License) - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under LGPL-2.1 - see the [LICENSE](LICENSE.md) file for details.
 
-```
 All rights reserved to the author.
-```

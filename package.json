@@ -1,12 +1,40 @@
 {
   "name": "hasty-server",
   "version": "0.9.6",
-  "main": "./server/index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
+  "main": "./dist/server/index.js",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "types": "./dist/types/server/index.d.ts"
+    },
+    "./response": {
+      "import": "./dist/server/response.mjs",
+      "require": "./dist/server/response.js",
+      "types": "./dist/types/server/response.d.ts"
+    },
+    "./lib/*": {
+      "import": "./dist/lib/*.mjs",
+      "require": "./dist/lib/*.js",
+      "types": "./dist/types/lib/*.d.ts"
+    }
   },
-  "scripts": {},
+  "types": "./dist/types/server/index.d.ts",
+  "directories": {
+    "src": "src",
+    "dist": "dist",
+    "test": "test",
+    "examples": "examples"
+  },
+  "scripts": {
+    "build:esm": "node scripts/build-esm.js",
+    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist/types",
+    "build:commonjs": "node scripts/build-commonjs.js",
+    "build": "npm run build:commonjs && npm run build:esm && npm run build:types",
+    "clean": "rm -rf dist",
+    "test": "node test/index.js"
+  },
   "keywords": [
     "http",
     "server",
@@ -19,8 +47,8 @@
     "http"
   ],
   "files": [
-    "server/",
-    "lib/",
+    "dist/",
+    "src/",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
@@ -35,5 +63,11 @@
   "homepage": "https://hasty-server.vercel.app",
   "license": "LGPL-2.1-only",
   "description": "A  Blazing fast simple http server for node.js",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }
