@@ -1,6 +1,39 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.9.6] - 2025-08-01
+### Updated
+- Updated License to LGPL-2.1-only.
+
+### Added Core Enhancements
+- Enhanced server/index.js with comprehensive JSDoc type definitions
+- Added improved routing with deterministic parameter handling
+- Integrated CORS support with automatic preflight OPTIONS handling
+- Added static file serving with security protections
+- Enhanced response.js with chainable API and improved error handling
+- Added robust file serving capabilities with directory traversal protection
+- Implemented connection timeout and error handling for sockets
+- Added detailed type definitions for better IDE support
+
+### Fixed Core Issues
+- Fixed route parameter extraction with safe URL decoding
+- Improved error handling in response methods
+- Added proper MIME type detection for static files
+- Enhanced socket error handling and cleanup
+- Fixed CORS preflight response handling
+
+### Added Utilities
+- Created lib/cors.js utility for centralized CORS handling
+- Enhanced lib/httpParser.js with safe fallbacks
+- Added comprehensive utils for MIME type detection
+- Added robust path normalization and security checks
+
+### Documentation
+- Added comprehensive JSDoc documentation for all public APIs
+- Created detailed type definitions for TypeScript compatibility
+- Added inline documentation for complex functions
+
 ## [0.9.5] - 2025-03-06
 ### Added
 - Added 'OPTIONS' method to handle preflight requests for CORS.

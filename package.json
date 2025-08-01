@@ -1,6 +1,6 @@
 {
   "name": "hasty-server",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "main": "./server/index.js",
   "directories": {
     "lib": "lib",
@@ -27,12 +27,13 @@
     "package.json",
     "CHANGELOG.md"
   ],
-  "author": "Akshat Kotpalliwar",
+  "author": "Akshat Kotpalliwar (alias IntegerAlex on GitHub)",
   "repository": {
     "type": "git",
     "url": "https://github.com/IntegerAlex/hasty-server.git"
   },
   "homepage": "https://hasty-server.vercel.app",
-  "license": "GPL-3.0",
-  "description": "A  Blazing fast simple http server for node.js"
+  "license": "LGPL-2.1-only",
+  "description": "A  Blazing fast simple http server for node.js",
+  "dependencies": {}
 }

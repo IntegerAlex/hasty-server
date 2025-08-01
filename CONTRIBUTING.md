@@ -13,7 +13,7 @@ Start by forking the repository on GitHub. This will create a personal copy of t
 Clone your forked repository to your local machine:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/hasty-server.git
+git clone https://github.com/IntegerAlex/hasty-server.git
 cd hasty-server
 ```
 
