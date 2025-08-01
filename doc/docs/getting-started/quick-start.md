@@ -129,32 +129,27 @@ app.get('/search', (req, res) => {
 });
 ```
 
-## Adding Middleware
+## Request Body Parsing
 
-Hasty Server supports middleware functions that can process requests before they reach your route handlers:
+Since Hasty Server doesn't support middleware, handle request body parsing directly in route handlers:
 
 ```javascript
-// Logging middleware
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next(); // Don't forget to call next() to continue to the next middleware/route
-});
-
-// JSON body parser middleware
-app.use((req, res, next) => {
+// Handle JSON POST requests
+app.post('/users', (req, res) => {
   if (req.headers['content-type'] === 'application/json') {
     let data = '';
     req.on('data', chunk => data += chunk);
     req.on('end', () => {
       try {
-        req.body = data ? JSON.parse(data) : {};
-        next();
+        const body = JSON.parse(data);
+        // Process the parsed body
+        res.status(201).json({ id: Date.now(), ...body });
       } catch (e) {
         res.status(400).json({ error: 'Invalid JSON' });
       }
     });
   } else {
-    next();
+    res.status(400).json({ error: 'Content-Type must be application/json' });
   }
 });
 ```
@@ -165,11 +160,10 @@ To enable CORS for all routes:
 
 ```javascript
 // Enable CORS for all routes
-app.cors({
-  origin: '*', // Allow all origins (restrict in production!)
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-});
+app.cors(true);
+
+// Note: Hasty Server's CORS implementation is basic
+// It enables CORS for all origins and common methods
 ```
 
 ## Serving Static Files
@@ -178,12 +172,13 @@ To serve static files (like HTML, CSS, images) from a directory:
 
 ```javascript
 // Serve files from the 'public' directory
-app.static('public', {
-  // Optional configuration
-  extensions: ['html', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif'],
-  index: 'index.html',
-  maxAge: '1d' // Cache for 1 day
-});
+app.static('public');
+
+// Serve with custom prefix
+app.static('assets', { prefix: '/static' });
+
+// Note: Hasty Server's static file serving is basic
+// Advanced options like caching headers are not supported
 ```
 
 ## Next Steps

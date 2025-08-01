@@ -1,11 +1,19 @@
 ---
 title: Serving Static Files
-description: Learn how to serve static files like HTML, CSS, images, and JavaScript with Hasty Server
+description: Learn how to serve static files with Hasty Server's basic static file serving capability
 ---
 
 # 📁 Serving Static Files in Hasty Server
 
-Hasty Server makes it easy to serve static files such as HTML, CSS, JavaScript, images, and more. This guide covers everything you need to know about serving static content.
+Hasty Server provides basic static file serving functionality. This guide covers what's actually supported.
+
+## What Hasty Server Actually Supports
+
+- Basic static file serving from a directory
+- Optional URL prefix for static files
+- Directory traversal protection
+- Automatic `index.html` serving for directories
+- Basic MIME type detection via file extensions
 
 ## Basic Static File Serving
 
@@ -27,28 +35,25 @@ With this setup, files in the `public` directory will be served at the root path
 
 ## Configuration Options
 
-The `static` method accepts an optional configuration object:
+The `static` method accepts limited configuration options:
 
 ```javascript
-app.static('public', {
-  // Options
-  dotfiles: 'ignore',     // How to handle dotfiles (allow, deny, ignore)
-  etag: true,            // Enable or disable etag generation
-  extensions: [           // Set file extension fallbacks
-    'html', 'css', 'js', 'json', 'png', 'jpg', 'jpeg', 'gif'
-  ],
-  index: 'index.html',    // Default file to serve when directory is requested
-  maxAge: '1d',           // Set the max-age for cache-control header
-  redirect: true,         // Redirect to trailing "/" when the pathname is a directory
-  setHeaders: (res, path) => {
-    // Set custom headers for specific file types
-    if (path.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-cache');
-    } else {
-      res.setHeader('Cache-Control', 'public, max-age=31536000');
-    }
-  }
-});
+// Basic usage
+app.static('public');
+
+// With URL prefix
+app.static('public', { prefix: '/static' });
+```
+
+**Available Options:**
+- `prefix` (string): URL prefix for static files (default: '/')
+
+**Not Supported:**
+- Custom headers or caching configuration
+- ETags
+- File extension fallbacks
+- Custom index files (always uses 'index.html')
+- Dotfile handling options
 ```
 
 ## Common Use Cases
