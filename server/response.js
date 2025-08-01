@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const { lookupMimeType } = require('../lib/utils');
-const { applyCorsHeaders } = require('../lib/cors');
+const fs = require('fs')
+const path = require('path')
+const { lookupMimeType } = require('../lib/utils')
+const { applyCorsHeaders } = require('../lib/cors')
 
 /**
  * @typedef {Object} ResponseOptions
@@ -15,7 +15,6 @@ const { applyCorsHeaders } = require('../lib/cors');
  * @property {string} [contentType] - Content-Type header value
  * @property {boolean} [end=true] - Whether to end the response after sending
  */
-
 
 /** @type {Object.<number, string>} */
 const STATUS_CODES = Object.freeze({
@@ -81,8 +80,7 @@ const STATUS_CODES = Object.freeze({
   508: 'Loop Detected',
   510: 'Not Extended',
   511: 'Network Authentication Required'
-});
-
+})
 
 /**
  * Response class for handling HTTP responses.
@@ -97,36 +95,36 @@ const STATUS_CODES = Object.freeze({
  */
 class Response {
   /** @type {number} */
-  statusCode = 200;
-  
+  statusCode = 200
+
   /** @type {boolean} */
-  enableCors = false;
-  
+  enableCors = false
+
   /** @type {Object.<string, string>} */
-  headers = {};
-  
+  headers = {}
+
   /** @type {boolean} */
-  headersSent = false;
-  
+  headersSent = false
+
   /** @type {import('net').Socket} */
-  socket;
+  socket
 
   /**
    * Create a new Response instance
    * @param {import('net').Socket} socket - The socket object for the response
    * @param {boolean} [enableCors=false] - Whether to enable CORS headers
    */
-  constructor(socket, enableCors = false) {
+  constructor (socket, enableCors = false) {
     if (!socket || typeof socket.write !== 'function') {
-      throw new Error('Socket is required and must be a writable stream');
+      throw new Error('Socket is required and must be a writable stream')
     }
-    
-    this.socket = socket;
-    this.enableCors = Boolean(enableCors);
+
+    this.socket = socket
+    this.enableCors = Boolean(enableCors)
     this.headers = {
       'Content-Type': 'text/plain',
       'X-Powered-By': 'Hasty-Server'
-    };
+    }
   }
 
   /**
@@ -135,12 +133,12 @@ class Response {
    * @returns {Response} The Response instance for chaining
    * @throws {Error} If status code is invalid
    */
-  status(code) {
+  status (code) {
     if (!Number.isInteger(code) || code < 100 || code > 599) {
-      throw new Error(`Invalid status code: ${code}`);
+      throw new Error(`Invalid status code: ${code}`)
     }
-    this.statusCode = code;
-    return this;
+    this.statusCode = code
+    return this
   }
 
   /**
@@ -149,19 +147,19 @@ class Response {
    * @param {string|number|string[]} value - Header value(s)
    * @returns {Response} The Response instance for chaining
    */
-  setHeader(key, value) {
+  setHeader (key, value) {
     if (this.headersSent) {
-      console.warn('Cannot set header after headers have been sent');
-      return this;
+      console.warn('Cannot set header after headers have been sent')
+      return this
     }
-    
+
     if (Array.isArray(value)) {
-      this.headers[key] = value.join(', ');
+      this.headers[key] = value.join(', ')
     } else {
-      this.headers[key] = String(value);
+      this.headers[key] = String(value)
     }
-    
-    return this;
+
+    return this
   }
 
   /**
@@ -169,9 +167,9 @@ class Response {
    * @private
    * @returns {void}
    */
-  _applyCorsHeaders() {
+  _applyCorsHeaders () {
     if (this.enableCors) {
-      applyCorsHeaders(this, true);
+      applyCorsHeaders(this, true)
     }
   }
 
@@ -196,74 +194,74 @@ class Response {
    * @param {SendOptions} [options] - Additional options
    * @returns {void}
    */
-  send(data, options = {}) {
+  send (data, options = {}) {
     if (this.headersSent) {
-      console.warn('Headers already sent');
-      return;
+      console.warn('Headers already sent')
+      return
     }
 
-    const { contentType, end = true } = options;
+    const { contentType, end = true } = options
 
     // Set content type if provided or default to text/plain
     if (contentType) {
-      this.setHeader('Content-Type', contentType);
+      this.setHeader('Content-Type', contentType)
     } else if (!this.headers['Content-Type']) {
-      this.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      this.setHeader('Content-Type', 'text/plain; charset=utf-8')
     }
 
     // Apply CORS headers
-    this._applyCorsHeaders();
+    this._applyCorsHeaders()
 
     // Handle different data types
-    let responseData = data;
+    let responseData = data
     if (data !== undefined && data !== null) {
       if (typeof data === 'object' && !Buffer.isBuffer(data)) {
         try {
-          responseData = JSON.stringify(data);
+          responseData = JSON.stringify(data)
           if (!contentType) {
-            this.setHeader('Content-Type', 'application/json; charset=utf-8');
+            this.setHeader('Content-Type', 'application/json; charset=utf-8')
           }
         } catch (error) {
-          console.error('Error stringifying JSON:', error);
-          return this.status(500).send('Error generating response');
+          console.error('Error stringifying JSON:', error)
+          return this.status(500).send('Error generating response')
         }
       } else if (Buffer.isBuffer(data)) {
         if (!contentType) {
-          this.setHeader('Content-Type', 'application/octet-stream');
+          this.setHeader('Content-Type', 'application/octet-stream')
         }
       } else {
-        responseData = String(data);
+        responseData = String(data)
       }
     } else {
-      responseData = '';
+      responseData = ''
     }
 
     // Set Content-Length header
-    const contentLength = responseData ? Buffer.byteLength(responseData) : 0;
-    this.setHeader('Content-Length', contentLength);
+    const contentLength = responseData ? Buffer.byteLength(responseData) : 0
+    this.setHeader('Content-Length', contentLength)
 
     // Build response
-    const statusText = STATUS_CODES[this.statusCode] || 'Unknown Status';
+    const statusText = STATUS_CODES[this.statusCode] || 'Unknown Status'
     const headers = Object.entries(this.headers)
       .map(([key, value]) => `${key}: ${value}`)
-      .join('\r\n');
+      .join('\r\n')
 
     // Send response
     this.socket.write(
       `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
       `${headers}\r\n\r\n`
-    );
+    )
 
     // Send response body if present
     if (contentLength > 0) {
-      this.socket.write(responseData);
+      this.socket.write(responseData)
     }
 
-    this.headersSent = true;
+    this.headersSent = true
 
     // End the connection if requested
     if (end) {
-      this.socket.end();
+      this.socket.end()
     }
   }
 
@@ -273,11 +271,11 @@ class Response {
    * @param {number} [status] - Optional status code
    * @returns {void}
    */
-  json(data, status) {
+  json (data, status) {
     if (status !== undefined) {
-      this.status(status);
+      this.status(status)
     }
-    this.send(data, { contentType: 'application/json; charset=utf-8' });
+    this.send(data, { contentType: 'application/json; charset=utf-8' })
   }
 
   /**
@@ -289,78 +287,77 @@ class Response {
    * @param {boolean} [options.end=true] - Whether to end the response
    * @returns {void}
    */
-  download(filePath, filename, options = {}) {
+  download (filePath, filename, options = {}) {
     if (this.headersSent) {
-      console.warn('Headers already sent');
-      return;
+      console.warn('Headers already sent')
+      return
     }
 
-    const { contentType, end = true } = options;
+    const { contentType, end = true } = options
 
     try {
-      const stats = fs.statSync(filePath);
-      
+      const stats = fs.statSync(filePath)
+
       // Set content disposition for download
-      const contentDisposition = `attachment${filename ? `; filename="${filename}"` : ''}`;
-      this.setHeader('Content-Disposition', contentDisposition);
-      
+      const contentDisposition = `attachment${filename ? `; filename="${filename}"` : ''}`
+      this.setHeader('Content-Disposition', contentDisposition)
+
       // Set content type
       if (contentType) {
-        this.setHeader('Content-Type', contentType);
+        this.setHeader('Content-Type', contentType)
       } else {
-        const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream';
-        this.setHeader('Content-Type', mimeType);
+        const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream'
+        this.setHeader('Content-Type', mimeType)
       }
-      
+
       // Set content length
-      this.setHeader('Content-Length', stats.size);
-      
+      this.setHeader('Content-Length', stats.size)
+
       // Apply CORS headers
-      this._applyCorsHeaders();
-      
+      this._applyCorsHeaders()
+
       // Send headers
-      const statusText = STATUS_CODES[this.statusCode] || 'OK';
+      const statusText = STATUS_CODES[this.statusCode] || 'OK'
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
-        .join('\r\n');
-      
+        .join('\r\n')
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
-      );
-      
-      this.headersSent = true;
-      
+      )
+
+      this.headersSent = true
+
       // Stream the file
-      const fileStream = fs.createReadStream(filePath);
-      fileStream.pipe(this.socket, { end });
-      
+      const fileStream = fs.createReadStream(filePath)
+      fileStream.pipe(this.socket, { end })
+
       // Handle stream errors
       fileStream.on('error', (error) => {
-        console.error('Error streaming file:', error);
+        console.error('Error streaming file:', error)
         if (!this.headersSent) {
-          this.status(500).send('Error streaming file');
+          this.status(500).send('Error streaming file')
         } else {
-          this.socket.end();
+          this.socket.end()
         }
-      });
-      
+      })
+
       if (end) {
         fileStream.on('end', () => {
-          this.socket.end();
-        });
+          this.socket.end()
+        })
       }
-      
     } catch (error) {
-      console.error('Error serving file:', error);
+      console.error('Error serving file:', error)
       if (!this.headersSent) {
         if (error.code === 'ENOENT') {
-          this.status(404).send('File not found');
+          this.status(404).send('File not found')
         } else {
-          this.status(500).send('Error serving file');
+          this.status(500).send('Error serving file')
         }
       } else {
-        this.socket.end();
+        this.socket.end()
       }
     }
   }
@@ -373,74 +370,73 @@ class Response {
    * @param {boolean} [options.end=true] - Whether to end the response
    * @returns {void}
    */
-  sendFile(filePath, options = {}) {
+  sendFile (filePath, options = {}) {
     if (this.headersSent) {
-      console.warn('Headers already sent');
-      return;
+      console.warn('Headers already sent')
+      return
     }
 
-    const { contentType, end = true } = options;
+    const { contentType, end = true } = options
 
     try {
-      const stats = fs.statSync(filePath);
-      
+      const stats = fs.statSync(filePath)
+
       // Set content type based on file extension if not provided
       if (contentType) {
-        this.setHeader('Content-Type', contentType);
+        this.setHeader('Content-Type', contentType)
       } else {
-        const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream';
-        this.setHeader('Content-Type', mimeType);
+        const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream'
+        this.setHeader('Content-Type', mimeType)
       }
-      
+
       // Set content length
-      this.setHeader('Content-Length', stats.size);
-      
+      this.setHeader('Content-Length', stats.size)
+
       // Apply CORS headers
-      this._applyCorsHeaders();
-      
+      this._applyCorsHeaders()
+
       // Send headers
-      const statusText = STATUS_CODES[this.statusCode] || 'OK';
+      const statusText = STATUS_CODES[this.statusCode] || 'OK'
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
-        .join('\r\n');
-      
+        .join('\r\n')
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
-      );
-      
-      this.headersSent = true;
-      
+      )
+
+      this.headersSent = true
+
       // Stream the file
-      const fileStream = fs.createReadStream(filePath);
-      fileStream.pipe(this.socket, { end });
-      
+      const fileStream = fs.createReadStream(filePath)
+      fileStream.pipe(this.socket, { end })
+
       // Handle stream errors
       fileStream.on('error', (error) => {
-        console.error('Error streaming file:', error);
+        console.error('Error streaming file:', error)
         if (!this.headersSent) {
-          this.status(500).send('Error streaming file');
+          this.status(500).send('Error streaming file')
         } else {
-          this.socket.end();
+          this.socket.end()
         }
-      });
-      
+      })
+
       if (end) {
         fileStream.on('end', () => {
-          this.socket.end();
-        });
+          this.socket.end()
+        })
       }
-      
     } catch (error) {
-      console.error('Error serving file:', error);
+      console.error('Error serving file:', error)
       if (!this.headersSent) {
         if (error.code === 'ENOENT') {
-          this.status(404).send('File not found');
+          this.status(404).send('File not found')
         } else {
-          this.status(500).send('Error serving file');
+          this.status(500).send('Error serving file')
         }
       } else {
-        this.socket.end();
+        this.socket.end()
       }
     }
   }
@@ -451,10 +447,10 @@ class Response {
    * @param {string} [message] - Optional message (defaults to status text)
    * @returns {void}
    */
-  sendStatus(statusCode, message) {
-    this.status(statusCode);
-    const statusText = message || STATUS_CODES[statusCode] || 'Unknown Status';
-    this.send(statusText);
+  sendStatus (statusCode, message) {
+    this.status(statusCode)
+    const statusText = message || STATUS_CODES[statusCode] || 'Unknown Status'
+    this.send(statusText)
   }
 
   /**
@@ -462,32 +458,32 @@ class Response {
    * @param {string|Buffer} [data] - Optional data to send before ending
    * @returns {void}
    */
-  end(data) {
+  end (data) {
     if (data !== undefined) {
-      this.send(data, { end: true });
+      this.send(data, { end: true })
     } else if (!this.headersSent) {
       // Send headers with no body
-      this.setHeader('Content-Length', '0');
-      this._applyCorsHeaders();
-      
-      const statusText = STATUS_CODES[this.statusCode] || 'OK';
+      this.setHeader('Content-Length', '0')
+      this._applyCorsHeaders()
+
+      const statusText = STATUS_CODES[this.statusCode] || 'OK'
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
-        .join('\r\n');
-      
+        .join('\r\n')
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
-      );
-      
-      this.headersSent = true;
-      this.socket.end();
+      )
+
+      this.headersSent = true
+      this.socket.end()
     } else {
-      this.socket.end();
+      this.socket.end()
     }
   }
 } // End of Response class
 
-Response.STATUS_CODES = STATUS_CODES;
+Response.STATUS_CODES = STATUS_CODES
 
-module.exports = Response;
+module.exports = Response
