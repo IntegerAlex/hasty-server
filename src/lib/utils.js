@@ -1,10 +1,9 @@
-
 /**
  * Finds the index of the first occurrence of the target character in the given string.
  * @param {string} req - The string to search through.
  * @param {string} target - The character to find in the string.
  * @returns {number} The index of the target character or -1 if not found.
- * 
+ *
  * @example
  * const index = findFirstBrac('Hello, World!', 'o');
  */
@@ -22,7 +21,7 @@ function findFirstBrac (req, target) {
  * @param {string} req - The HTTP request as a string.
  * @param {number} pos - The position in the string to start parsing.
  * @returns {Promise<string>} A promise that resolves to the cleaned-up body.
- * 
+ *
  * @example
  * const body = await HTTPbody(req, pos);
  */
@@ -53,7 +52,7 @@ function HTTPbody (req, pos) {
  * Cleans up the body content by trimming spaces and standardizing spacing around colons and commas.
  * @param {string} body - The body content to clean up.
  * @returns {string} body - The cleaned-up body.
- * 
+ *
  * @example
  * const cleanedBody = cleanUpBody(body);
  */
@@ -74,7 +73,7 @@ function cleanUpBody (body) {
  * Parses a JSON-like HTTP body into an object.
  * @param {string} body - The HTTP body content as a string.
  * @returns {Object} The parsed JSON object.
- * 
+ *
  * @example
  * const parsedBody = JSONbodyParser(body);
  */
@@ -102,14 +101,13 @@ function JSONbodyParser (body) {
   return httpJSON
 }
 
-
 /**
  * Stores key-value pairs in the provided JSON object.
  * @param {Array<string>} req - The remaining request characters.
  * @param {Object} httpJSON - The JSON object to store the parsed data.
  * @returns {Array<string>} The remaining unprocessed request characters.
- * 
- * @example 
+ *
+ * @example
  * storePair(req, httpJSON);
  */
 function storePair (req, httpJSON) {
@@ -145,13 +143,12 @@ function storePair (req, httpJSON) {
   return req
 }
 
-
 /**
  * Parses primitive values from the request array.
  * @param {Array<string>} req - The remaining request characters.
  * @returns {string|number} The parsed value, either as a string or number.
- * 
- * @example 
+ *
+ * @example
  * const parsedValue = parseValue(req);
  */
 // Helper function to parse primitive values (strings, numbers, etc.)
@@ -195,8 +192,8 @@ function parseValue (req) {
  * Parses a query string from a request URL into a JSON object.
  * @param {string} request - The request URL as a string.
  * @returns {Object} The parsed query parameters as a JSON object.
- * 
- * @example 
+ *
+ * @example
  * const queryParams = queryParser(request);
  */
 function queryParser (request) {
@@ -221,12 +218,11 @@ function queryParser (request) {
 
 const mimeDb = require('./mimeDb') // Adjust the path as needed
 
-
 /**
  * Looks up the MIME type based on the file extension.
  * @param {string} extension - The file extension to look up.
  * @returns {string} The MIME type or 'application/octet-stream' if not found.
- * 
+ *
  * @example
  * const mimeType = lookupMimeType('application/json');
  */
