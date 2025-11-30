@@ -1,6 +1,6 @@
 {
   "name": "hasty-server",
-  "version": "0.9.6",
+  "version": "1.0.0",
   "main": "./dist/server/index.js",
   "type": "commonjs",
   "exports": {

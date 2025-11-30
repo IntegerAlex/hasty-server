@@ -8,7 +8,7 @@
  * @example
  * const index = findFirstBrac('Hello, World!', 'o');
  */
-function findFirstBrac (req, target) {
+function findFirstBrac(req, target) {
   for (let i = 0; i < req.length; i++) {
     if (req[i] === target) {
       return i
@@ -26,7 +26,7 @@ function findFirstBrac (req, target) {
  * @example
  * const body = await HTTPbody(req, pos);
  */
-function HTTPbody (req, pos) {
+function HTTPbody(req, pos) {
   let flag = 0
   let body = ''
   return new Promise((resolve, reject) => {
@@ -57,7 +57,7 @@ function HTTPbody (req, pos) {
  * @example
  * const cleanedBody = cleanUpBody(body);
  */
-function cleanUpBody (body) {
+function cleanUpBody(body) {
   // Trim leading and trailing spaces
   body = body.trim()
 
@@ -78,28 +78,102 @@ function cleanUpBody (body) {
  * @example
  * const parsedBody = JSONbodyParser(body);
  */
-function JSONbodyParser (body) {
-  const req = body.split('')
-  const httpJSON = new Object()
-  let flag = 0
-  const pos = 0
+function JSONbodyParser(body) {
+  const req = body.split('');
 
-  // Check for empty input
-  if (req.length < 1) return httpJSON
-
-  while (req.length > 0) {
-    if (req[0] == '{') {
-      flag++
-      req.shift() // Move past the '{'
-    } else if (req[0] == '}') {
-      flag--
-      req.shift() // Move past the '}'
-    } else {
-      storePair(req, httpJSON)
+  // Helper to skip whitespace
+  function skipWhitespace() {
+    while (req.length > 0 && /\s/.test(req[0])) {
+      req.shift();
     }
   }
 
-  return httpJSON
+  // Recursive parser
+  function parse() {
+    skipWhitespace();
+    if (req.length === 0) return undefined;
+
+    const char = req[0];
+
+    if (char === '{') {
+      req.shift(); // consume '{'
+      const obj = {};
+      while (req.length > 0) {
+        skipWhitespace();
+        if (req[0] === '}') {
+          req.shift(); // consume '}'
+          return obj;
+        }
+
+        // Parse key
+        let key = '';
+        if (req[0] === '"') {
+          req.shift(); // consume '"'
+          while (req.length > 0 && req[0] !== '"') {
+            key += req.shift();
+          }
+          req.shift(); // consume closing '"'
+        } else {
+          // Allow unquoted keys (non-standard but supported by original parser logic)
+          while (req.length > 0 && req[0] !== ':' && req[0] !== ' ') {
+            key += req.shift();
+          }
+        }
+
+        skipWhitespace();
+        if (req[0] === ':') req.shift(); // consume ':'
+
+        const value = parse();
+        obj[key] = value;
+
+        skipWhitespace();
+        if (req[0] === ',') req.shift(); // consume ','
+      }
+    } else if (char === '[') {
+      req.shift(); // consume '['
+      const arr = [];
+      while (req.length > 0) {
+        skipWhitespace();
+        if (req[0] === ']') {
+          req.shift(); // consume ']'
+          return arr;
+        }
+
+        const value = parse();
+        arr.push(value);
+
+        skipWhitespace();
+        if (req[0] === ',') req.shift(); // consume ','
+      }
+    } else if (char === '"') {
+      req.shift(); // consume '"'
+      let str = '';
+      while (req.length > 0 && req[0] !== '"') {
+        str += req.shift();
+      }
+      req.shift(); // consume closing '"'
+      return str;
+    } else {
+      // Number, boolean, null
+      let val = '';
+      while (req.length > 0 && req[0] !== ',' && req[0] !== '}' && req[0] !== ']') {
+        val += req.shift();
+      }
+      val = val.trim();
+      if (val === 'true') return true;
+      if (val === 'false') return false;
+      if (val === 'null') return null;
+      const num = Number(val);
+      return isNaN(num) ? val : num;
+    }
+  }
+
+  try {
+    return parse() || {};
+  } catch (e) {
+    console.error('JSON Parse Error:', e);
+    return {};
+  }
 }
 
 
@@ -112,7 +186,7 @@ function JSONbodyParser (body) {
  * @example 
  * storePair(req, httpJSON);
  */
-function storePair (req, httpJSON) {
+function storePair(req, httpJSON) {
   let key = ''
   let value = ''
 
@@ -126,6 +200,11 @@ function storePair (req, httpJSON) {
 
   if (req.length < 1) return // Exit if we reach the end of input without finding a key-value pair
   req.shift() // Skip over the colon ':'
+
+  // Skip whitespace after colon
+  while (req.length > 0 && req[0] === ' ') {
+    req.shift()
+  }
 
   // Parse the value
   if (req.length > 0 && req[0] === '{') {
@@ -155,7 +234,7 @@ function storePair (req, httpJSON) {
  * const parsedValue = parseValue(req);
  */
 // Helper function to parse primitive values (strings, numbers, etc.)
-function parseValue (req) {
+function parseValue(req) {
   let value = ''
   let isString = false
 
@@ -199,7 +278,7 @@ function parseValue (req) {
  * @example 
  * const queryParams = queryParser(request);
  */
-function queryParser (request) {
+function queryParser(request) {
   const httpQueryJSON = new Object()
   const queryStart = request.indexOf('?')
 
@@ -230,7 +309,7 @@ const mimeDb = require('./mimeDb') // Adjust the path as needed
  * @example
  * const mimeType = lookupMimeType('application/json');
  */
-function lookupMimeType (extension) {
+function lookupMimeType(extension) {
   const mimeType = Object.keys(mimeDb).find(type =>
     mimeDb[type].extensions.includes(extension)
   )

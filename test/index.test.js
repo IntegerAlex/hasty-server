@@ -1,5 +1,5 @@
 const net = require('net')
-const Hasty = require('../server/index') // Adjust the path as neededc
+const Hasty = require('../src/server/index') // Adjust the path as neededc
 const fs = require('fs')
 describe('Hasty Server', () => {
   let server

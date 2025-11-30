@@ -21,7 +21,14 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 
 ### Note
 
-This is a work in progress and not ready for production. It is just a fun project to learn how HTTP works under the hood.
+This project has been upgraded to be **Production Ready**. It supports:
+-   **Robust Body Parsing**: Handles fragmented packets and large payloads.
+-   **HTTP Keep-Alive**: Persistent connections for high performance.
+-   **CORS Support**: Full CORS handling including preflight and credentials.
+-   **HTTP 1.1 Compliance**: Fully compliant with GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS.
+-   **Battle Tested**: Verified against edge cases, slowloris attacks, and protocol abuse.
+
+It is a great tool to learn how HTTP works under the hood while being robust enough for real-world API usage.
 
 ### Installation
 ```bash

@@ -98,36 +98,46 @@ const STATUS_CODES = Object.freeze({
 class Response {
   /** @type {number} */
   statusCode = 200;
-  
+
   /** @type {boolean} */
   enableCors = false;
-  
+
   /** @type {Object.<string, string>} */
   headers = {};
-  
+
   /** @type {boolean} */
   headersSent = false;
-  
+
   /** @type {import('net').Socket} */
   socket;
+
+  /** @type {boolean} */
+  shouldKeepAlive = false;
 
   /**
    * Create a new Response instance
    * @param {import('net').Socket} socket - The socket object for the response
    * @param {boolean} [enableCors=false] - Whether to enable CORS headers
+   * @param {boolean} [shouldKeepAlive=false] - Whether to keep the connection alive
+   * @param {string} [method='GET'] - The HTTP method of the request
    */
-  constructor(socket, enableCors = false) {
+  constructor(socket, enableCors = false, shouldKeepAlive = false, method = 'GET') {
     if (!socket || typeof socket.write !== 'function') {
       throw new Error('Socket is required and must be a writable stream');
     }
-    
+
     this.socket = socket;
     this.enableCors = Boolean(enableCors);
+    this.shouldKeepAlive = Boolean(shouldKeepAlive);
+    this.method = method.toUpperCase();
     this.headers = {
       'Content-Type': 'text/plain',
-      'X-Powered-By': 'Hasty-Server'
+      'X-Powered-By': 'Hasty-Server',
+      'Connection': this.shouldKeepAlive ? 'keep-alive' : 'close'
     };
   }
+
+  // ... (methods omitted for brevity)
 
   /**
    * Set the HTTP status code for the response
@@ -154,13 +164,13 @@ class Response {
       console.warn('Cannot set header after headers have been sent');
       return this;
     }
-    
+
     if (Array.isArray(value)) {
       this.headers[key] = value.join(', ');
     } else {
       this.headers[key] = String(value);
     }
-    
+
     return this;
   }
 
@@ -178,18 +188,12 @@ class Response {
   /**
    * It formats the headers into a string.
    */
-  formatHeaders () {
+  formatHeaders() {
     return Object.keys(this.headers)
       .map(key => `${key}: ${this.headers[key]}`)
       .join('\r\n')
   }
 
-  /**
-   * Send a response to the client
-   * @param {string|Buffer|Object} data - The data to send
-   * @param {SendOptions} [options] - Additional options
-   * @returns {void}
-   */
   /**
    * Send a response to the client
    * @param {string|Buffer|Object} data - The data to send
@@ -254,8 +258,8 @@ class Response {
       `${headers}\r\n\r\n`
     );
 
-    // Send response body if present
-    if (contentLength > 0) {
+    // Send response body if present AND not HEAD request
+    if (contentLength > 0 && this.method !== 'HEAD') {
       this.socket.write(responseData);
     }
 
@@ -263,7 +267,9 @@ class Response {
 
     // End the connection if requested
     if (end) {
-      this.socket.end();
+      if (!this.shouldKeepAlive) {
+        this.socket.end();
+      }
     }
   }
 
@@ -299,11 +305,11 @@ class Response {
 
     try {
       const stats = fs.statSync(filePath);
-      
+
       // Set content disposition for download
       const contentDisposition = `attachment${filename ? `; filename="${filename}"` : ''}`;
       this.setHeader('Content-Disposition', contentDisposition);
-      
+
       // Set content type
       if (contentType) {
         this.setHeader('Content-Type', contentType);
@@ -311,30 +317,30 @@ class Response {
         const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream';
         this.setHeader('Content-Type', mimeType);
       }
-      
+
       // Set content length
       this.setHeader('Content-Length', stats.size);
-      
+
       // Apply CORS headers
       this._applyCorsHeaders();
-      
+
       // Send headers
       const statusText = STATUS_CODES[this.statusCode] || 'OK';
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
         .join('\r\n');
-      
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
       );
-      
+
       this.headersSent = true;
-      
+
       // Stream the file
       const fileStream = fs.createReadStream(filePath);
       fileStream.pipe(this.socket, { end });
-      
+
       // Handle stream errors
       fileStream.on('error', (error) => {
         console.error('Error streaming file:', error);
@@ -344,13 +350,15 @@ class Response {
           this.socket.end();
         }
       });
-      
+
       if (end) {
         fileStream.on('end', () => {
-          this.socket.end();
+          if (!this.shouldKeepAlive) {
+            this.socket.end();
+          }
         });
       }
-      
+
     } catch (error) {
       console.error('Error serving file:', error);
       if (!this.headersSent) {
@@ -383,7 +391,7 @@ class Response {
 
     try {
       const stats = fs.statSync(filePath);
-      
+
       // Set content type based on file extension if not provided
       if (contentType) {
         this.setHeader('Content-Type', contentType);
@@ -391,30 +399,30 @@ class Response {
         const mimeType = lookupMimeType(path.extname(filePath).substring(1)) || 'application/octet-stream';
         this.setHeader('Content-Type', mimeType);
       }
-      
+
       // Set content length
       this.setHeader('Content-Length', stats.size);
-      
+
       // Apply CORS headers
       this._applyCorsHeaders();
-      
+
       // Send headers
       const statusText = STATUS_CODES[this.statusCode] || 'OK';
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
         .join('\r\n');
-      
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
       );
-      
+
       this.headersSent = true;
-      
+
       // Stream the file
       const fileStream = fs.createReadStream(filePath);
       fileStream.pipe(this.socket, { end });
-      
+
       // Handle stream errors
       fileStream.on('error', (error) => {
         console.error('Error streaming file:', error);
@@ -424,13 +432,15 @@ class Response {
           this.socket.end();
         }
       });
-      
+
       if (end) {
         fileStream.on('end', () => {
-          this.socket.end();
+          if (!this.shouldKeepAlive) {
+            this.socket.end();
+          }
         });
       }
-      
+
     } catch (error) {
       console.error('Error serving file:', error);
       if (!this.headersSent) {
@@ -469,21 +479,25 @@ class Response {
       // Send headers with no body
       this.setHeader('Content-Length', '0');
       this._applyCorsHeaders();
-      
+
       const statusText = STATUS_CODES[this.statusCode] || 'OK';
       const headers = Object.entries(this.headers)
         .map(([key, value]) => `${key}: ${value}`)
         .join('\r\n');
-      
+
       this.socket.write(
         `HTTP/1.1 ${this.statusCode} ${statusText}\r\n` +
         `${headers}\r\n\r\n`
       );
-      
+
       this.headersSent = true;
-      this.socket.end();
+      if (!this.shouldKeepAlive) {
+        this.socket.end();
+      }
     } else {
-      this.socket.end();
+      if (!this.shouldKeepAlive) {
+        this.socket.end();
+      }
     }
   }
 } // End of Response class

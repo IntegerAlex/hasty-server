@@ -14,7 +14,8 @@ const DEFAULT_CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Max-Age': '86400' // 24 hours
+  'Access-Control-Max-Age': '86400', // 24 hours
+  'Access-Control-Allow-Credentials': 'true'
 };
 
 /**
@@ -26,11 +27,14 @@ const DEFAULT_CORS_HEADERS = {
  */
 function applyCorsHeaders(response, enabled = true, customHeaders = {}) {
   if (!enabled) return;
-  
+
   const headers = { ...DEFAULT_CORS_HEADERS, ...customHeaders };
-  
+
   Object.entries(headers).forEach(([key, value]) => {
-    response.setHeader(key, value);
+    // Only set if explicitly provided in customHeaders or if not already set
+    if (customHeaders[key] || !response.headers[key]) {
+      response.setHeader(key, value);
+    }
   });
 }
 
@@ -47,10 +51,10 @@ function handlePreflight(request, response, enabled = true) {
   }
 
   applyCorsHeaders(response, true, {
-    'Access-Control-Allow-Methods': request.headers['access-control-request-method'] || 
-                                   DEFAULT_CORS_HEADERS['Access-Control-Allow-Methods'],
-    'Access-Control-Allow-Headers': request.headers['access-control-request-headers'] || 
-                                    DEFAULT_CORS_HEADERS['Access-Control-Allow-Headers']
+    'Access-Control-Allow-Methods': request.headers['access-control-request-method'] ||
+      DEFAULT_CORS_HEADERS['Access-Control-Allow-Methods'],
+    'Access-Control-Allow-Headers': request.headers['access-control-request-headers'] ||
+      DEFAULT_CORS_HEADERS['Access-Control-Allow-Headers']
   });
 
   response.status(204).send('');

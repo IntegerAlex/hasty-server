@@ -1,4 +1,4 @@
-const { httpParser } = require('../lib/httpParser')
+const { httpParser } = require('../src/lib/httpParser')
 
 describe('httpParser', () => {
   test('should parse a simple request', (done) => {
@@ -8,8 +8,13 @@ describe('httpParser', () => {
       expect(result).toEqual({
         method: 'GET',
         path: '/path',
-        version: 'HTTP/1.1\r',
-        query: {}
+        version: 'HTTP/1.1',
+        query: {},
+        headers: {
+          host: 'localhost:3000'
+        },
+        ip: '127.0.0.1',
+        body: undefined
       })
       done()
     })
@@ -21,9 +26,13 @@ describe('httpParser', () => {
       expect(result).toEqual({
         method: 'GET',
         path: '/path',
-        version: 'HTTP/1.1\r',
-        query: { query: 'string' }
-
+        version: 'HTTP/1.1',
+        query: { query: 'string' },
+        headers: {
+          host: 'localhost:3000'
+        },
+        ip: '127.0.0.1',
+        body: undefined
       })
       done()
     })
@@ -35,9 +44,14 @@ describe('httpParser', () => {
       expect(result).toEqual({
         method: 'POST',
         path: '/path',
-        version: 'HTTP/1.1\r',
+        version: 'HTTP/1.1',
         query: {},
-        body: { key: 'value' }
+        body: { key: 'value' },
+        headers: {
+          host: 'localhost:3000',
+          'content-type': 'application/json'
+        },
+        ip: '127.0.0.1'
       })
       done()
     })
@@ -50,9 +64,14 @@ describe('httpParser', () => {
       expect(result).toEqual({
         method: 'POST',
         path: '/path',
-        version: 'HTTP/1.1\r',
+        version: 'HTTP/1.1',
         query: {},
-        body: { key: { nested: 'value' } }
+        body: { key: { nested: 'value' } },
+        headers: {
+          host: 'localhost:3000',
+          'content-type': 'application/json'
+        },
+        ip: '127.0.0.1'
       })
       done()
     })
