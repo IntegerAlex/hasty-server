@@ -1,11 +1,11 @@
-const { httpParser } = require('../lib/httpParser.js');
-const net = require('net');
-const path = require('path');
-const { URL } = require('url');
-const crypto = require('crypto');
-const Response = require('./response.js');
-const { handlePreflight } = require('../lib/cors');
-const logger = require('../lib/logger');
+const { httpParser } = require('../lib/httpParser.js')
+const net = require('net')
+const path = require('path')
+const { URL } = require('url')
+const crypto = require('crypto')
+const Response = require('./response.js')
+const { handlePreflight } = require('../lib/cors')
+const logger = require('../lib/logger')
 
 /**
  * @typedef {Object} Route
@@ -21,27 +21,27 @@ const logger = require('../lib/logger');
  * @param {Object} context - Server context object
  * @returns {net.Server} - Node.js Server instance
  */
-function createServer(callback, context) {
+function createServer (callback, context) {
   return net.createServer((socket) => {
     // Set socket timeout to prevent hanging connections
-    socket.setTimeout(30000); // 30 seconds
+    socket.setTimeout(30000) // 30 seconds
 
     // Handle connection errors
     socket.on('error', (error) => {
-      logger.error('Socket error', { error: error.message, stack: error.stack });
+      logger.error('Socket error', { error: error.message, stack: error.stack })
       if (!socket.destroyed) {
-        socket.destroy();
+        socket.destroy()
       }
-    });
+    })
 
     // Handle timeout
     socket.on('timeout', () => {
-      logger.warn('Socket timeout - closing connection');
-      socket.end('HTTP/1.1 408 Request Timeout\r\n\r\n');
-    });
+      logger.warn('Socket timeout - closing connection')
+      socket.end('HTTP/1.1 408 Request Timeout\r\n\r\n')
+    })
 
-    callback(socket, context);
-  });
+    callback(socket, context)
+  })
 }
 
 /**
@@ -54,73 +54,73 @@ function createServer(callback, context) {
  * @param {net.Socket} socket - The socket connection
  * @param {Object} context - Server context with routes and configuration
  */
-function handleConnection(socket, context) {
-  let buffer = Buffer.alloc(0);
-  const maxRequestSize = context.maxRequestSize || 10 * 1024 * 1024; // Default 10MB
-  const securityHeaders = context.securityHeaders;
-  const rateLimit = context.rateLimit;
+function handleConnection (socket, context) {
+  let buffer = Buffer.alloc(0)
+  const maxRequestSize = context.maxRequestSize || 10 * 1024 * 1024 // Default 10MB
+  const securityHeaders = context.securityHeaders
+  const rateLimit = context.rateLimit
 
   socket.on('data', (chunk) => {
-    buffer = Buffer.concat([buffer, chunk]);
+    buffer = Buffer.concat([buffer, chunk])
 
-      // Check if buffer exceeds maximum request size
+    // Check if buffer exceeds maximum request size
     if (buffer.length > maxRequestSize) {
       logger.warn('Request size exceeds maximum allowed size', {
         size: buffer.length,
         maxSize: maxRequestSize
-      });
+      })
       if (socket.writable) {
-        const res = new Response(socket, context.enableCors);
-        res.status(413).send('Payload Too Large');
+        const res = new Response(socket, context.enableCors)
+        res.status(413).send('Payload Too Large')
       }
-      socket.destroy();
-      return;
+      socket.destroy()
+      return
     }
 
     // Process as many requests as possible from the buffer
     while (buffer.length > 0) {
       // 1. Check for header end
-      const headerEndIndex = buffer.indexOf('\r\n\r\n');
+      const headerEndIndex = buffer.indexOf('\r\n\r\n')
       if (headerEndIndex === -1) {
         // Headers not fully received yet
-        break;
+        break
       }
 
       // 2. Parse headers to find Content-Length
-      const headerPart = buffer.slice(0, headerEndIndex).toString();
-      const contentLengthMatch = headerPart.match(/Content-Length:\s*(\d+)/i);
-      const contentLength = contentLengthMatch ? parseInt(contentLengthMatch[1], 10) : 0;
+      const headerPart = buffer.slice(0, headerEndIndex).toString()
+      const contentLengthMatch = headerPart.match(/Content-Length:\s*(\d+)/i)
+      const contentLength = contentLengthMatch ? parseInt(contentLengthMatch[1], 10) : 0
 
       // 3. Check if we have the full body
-      const totalRequestLength = headerEndIndex + 4 + contentLength;
+      const totalRequestLength = headerEndIndex + 4 + contentLength
 
       if (buffer.length < totalRequestLength) {
         // Body not fully received yet
-        break;
+        break
       }
 
       // 4. Extract the full request
-      const requestData = buffer.slice(0, totalRequestLength);
+      const requestData = buffer.slice(0, totalRequestLength)
 
       // 5. Remove processed data from buffer
-      buffer = buffer.slice(totalRequestLength);
+      buffer = buffer.slice(totalRequestLength)
 
       // 6. Process the request
       processRequest(socket, requestData, context)
         .catch(error => {
-          console.error('Error processing request:', error);
+          console.error('Error processing request:', error)
           // Only send error if socket is still open and writable
           if (socket.writable) {
-            const res = new Response(socket, context.enableCors);
-            res.status(500).send('Internal Server Error');
+            const res = new Response(socket, context.enableCors)
+            res.status(500).send('Internal Server Error')
           }
-        });
+        })
     }
-  });
+  })
 
   socket.on('error', (error) => {
     // console.error('Connection error:', error);
-  });
+  })
 }
 
 /**
@@ -130,98 +130,98 @@ function handleConnection(socket, context) {
  * @param {Object} context - Server context
  * @returns {Promise<void>}
  */
-async function processRequest(socket, requestData, context) {
-    // Parse the HTTP request first to check headers
-  let req;
+async function processRequest (socket, requestData, context) {
+  // Parse the HTTP request first to check headers
+  let req
   // Generate unique request ID for tracing
-  const requestId = crypto.randomUUID();
+  const requestId = crypto.randomUUID()
 
   try {
-    req = await httpParser(requestData.toString());
-    req.id = requestId; // Add request ID to request object
+    req = await httpParser(requestData.toString())
+    req.id = requestId // Add request ID to request object
   } catch (error) {
     logger.error('Request parsing error', {
       error: error.message,
       stack: error.stack,
       requestDataLength: requestData.length,
       requestId
-    });
+    })
     if (socket.writable) {
-      const res = new Response(socket, context.enableCors);
-      res.setHeader('X-Request-ID', requestId);
+      const res = new Response(socket, context.enableCors)
+      res.setHeader('X-Request-ID', requestId)
       res.status(400).json({
         error: 'Bad Request',
         message: 'Invalid request format',
         requestId
-      });
+      })
     }
-    return;
+    return
   }
 
   // Determine if we should keep the connection alive
   // Default to true for HTTP/1.1, false for HTTP/1.0 unless Keep-Alive header is present
-  const connectionHeader = (req.headers['connection'] || '').toLowerCase();
-  const isHttp11 = req.version === 'HTTP/1.1';
-  let shouldKeepAlive = isHttp11;
+  const connectionHeader = (req.headers.connection || '').toLowerCase()
+  const isHttp11 = req.version === 'HTTP/1.1'
+  let shouldKeepAlive = isHttp11
 
   if (connectionHeader === 'close') {
-    shouldKeepAlive = false;
+    shouldKeepAlive = false
   } else if (connectionHeader === 'keep-alive') {
-    shouldKeepAlive = true;
+    shouldKeepAlive = true
   }
 
-  const res = new Response(socket, context.enableCors, shouldKeepAlive, req.method);
+  const res = new Response(socket, context.enableCors, shouldKeepAlive, req.method)
 
   // Add request ID to response headers for tracing
-  res.setHeader('X-Request-ID', requestId);
+  res.setHeader('X-Request-ID', requestId)
 
   // Apply security headers if configured
   if (securityHeaders) {
     Object.entries(securityHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
+      res.setHeader(key, value)
+    })
   }
 
   // Check rate limiting if configured
   if (rateLimit) {
-    const clientIP = req.ip || 'unknown';
-    const now = Date.now();
-    const windowStart = now - rateLimit.windowMs;
+    const clientIP = req.ip || 'unknown'
+    const now = Date.now()
+    const windowStart = now - rateLimit.windowMs
 
     // Get or create client record
     if (!rateLimit.store.has(clientIP)) {
-      rateLimit.store.set(clientIP, []);
+      rateLimit.store.set(clientIP, [])
     }
 
-    const clientRequests = rateLimit.store.get(clientIP);
+    const clientRequests = rateLimit.store.get(clientIP)
 
     // Remove old requests outside the window
-    const validRequests = clientRequests.filter(timestamp => timestamp > windowStart);
+    const validRequests = clientRequests.filter(timestamp => timestamp > windowStart)
 
     if (validRequests.length >= rateLimit.maxRequests) {
       logger.warn('Rate limit exceeded', {
         ip: clientIP,
         requests: validRequests.length,
         maxRequests: rateLimit.maxRequests
-      });
-      res.status(429).setHeader('Retry-After', Math.ceil(rateLimit.windowMs / 1000)).send(rateLimit.message);
-      return;
+      })
+      res.status(429).setHeader('Retry-After', Math.ceil(rateLimit.windowMs / 1000)).send(rateLimit.message)
+      return
     }
 
     // Add current request timestamp
-    validRequests.push(now);
-    rateLimit.store.set(clientIP, validRequests);
+    validRequests.push(now)
+    rateLimit.store.set(clientIP, validRequests)
   }
 
   try {
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS' && context.enableCors) {
-      handlePreflight(req, res);
-      return;
+      handlePreflight(req, res)
+      return
     }
 
     // Find matching route
-    const route = findMatchingRoute(req.method, req.path, context.routes);
+    const route = findMatchingRoute(req.method, req.path, context.routes)
 
     if (!route) {
       logger.info('Route not found', {
@@ -229,29 +229,28 @@ async function processRequest(socket, requestData, context) {
         path: req.path,
         ip: req.ip,
         requestId
-      });
+      })
       res.status(404).json({
         error: 'Not Found',
         message: `Route ${req.method} ${req.path} not found`,
         requestId
-      });
-      return;
+      })
+      return
     }
 
     // Extract URL parameters
-    req.params = extractParams(route.path, req.path);
+    req.params = extractParams(route.path, req.path)
 
     // Parse query parameters
     if (req.path.includes('?')) {
-      const url = new URL(`http://dummy${req.path}`);
-      req.query = Object.fromEntries(url.searchParams.entries());
+      const url = new URL(`http://dummy${req.path}`)
+      req.query = Object.fromEntries(url.searchParams.entries())
     } else {
-      req.query = {};
+      req.query = {}
     }
 
     // Execute route handler
-    await route.callback(req, res);
-
+    await route.callback(req, res)
   } catch (error) {
     logger.error('Request processing error', {
       error: error.message,
@@ -260,13 +259,13 @@ async function processRequest(socket, requestData, context) {
       path: req.path,
       ip: req.ip,
       requestId
-    });
+    })
     if (!res.headersSent) {
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'An unexpected error occurred',
         requestId
-      });
+      })
     }
   }
 }
@@ -278,18 +277,18 @@ async function processRequest(socket, requestData, context) {
  * @param {Array<Route>} routes - Available routes
  * @returns {Route|undefined} - Matched route or undefined
  */
-function findMatchingRoute(method, path, routes) {
+function findMatchingRoute (method, path, routes) {
   // First try exact match
   const exactMatch = routes.find(
     route => route.method === method && route.path === path
-  );
+  )
 
-  if (exactMatch) return exactMatch;
+  if (exactMatch) return exactMatch
 
   // Then try parameterized routes
   return routes.find(route =>
     route.method === method && matchRouteWithParams(route.path, path)
-  );
+  )
 }
 
 /**
@@ -298,15 +297,15 @@ function findMatchingRoute(method, path, routes) {
  * @param {string} urlPath - Actual URL path
  * @returns {boolean} - True if the route matches
  */
-function matchRouteWithParams(routePath, urlPath) {
-  const routeParts = routePath.split('/');
-  const pathParts = urlPath.split('?')[0].split('/');
+function matchRouteWithParams (routePath, urlPath) {
+  const routeParts = routePath.split('/')
+  const pathParts = urlPath.split('?')[0].split('/')
 
-  if (routeParts.length !== pathParts.length) return false;
+  if (routeParts.length !== pathParts.length) return false
 
   return routeParts.every((part, i) =>
     part.startsWith(':') || part === pathParts[i]
-  );
+  )
 }
 
 /**
@@ -315,18 +314,18 @@ function matchRouteWithParams(routePath, urlPath) {
  * @param {string} urlPath - Actual URL path (e.g., '/users/123')
  * @returns {Object} - Extracted parameters
  */
-function extractParams(routePath, urlPath) {
-  const params = {};
-  const routeParts = routePath.split('/');
-  const pathParts = urlPath.split('?')[0].split('/');
+function extractParams (routePath, urlPath) {
+  const params = {}
+  const routeParts = routePath.split('/')
+  const pathParts = urlPath.split('?')[0].split('/')
 
   routeParts.forEach((part, i) => {
     if (part.startsWith(':')) {
-      params[part.slice(1)] = decodeURIComponent(pathParts[i]);
+      params[part.slice(1)] = decodeURIComponent(pathParts[i])
     }
-  });
+  })
 
-  return params;
+  return params
 }
 
 /**
@@ -338,16 +337,16 @@ class Server {
    * Creates a new Server instance
    * @constructor
    */
-  constructor() {
+  constructor () {
     /** @private */
-    this.routes = [];
+    this.routes = []
 
     /** @private */
-    this.server = null;
+    this.server = null
 
     // Bind methods
-    this.listen = this.listen.bind(this);
-    this.close = this.close.bind(this);
+    this.listen = this.listen.bind(this)
+    this.close = this.close.bind(this)
   }
 
   /**
@@ -356,7 +355,7 @@ class Server {
    * @param {Function} [callback] - Callback function when server starts
    * @returns {Promise<void>}
    */
-  listen(port, callback) {
+  listen (port, callback) {
     return new Promise((resolve, reject) => {
       try {
         this.server = createServer(handleConnection, {
@@ -365,41 +364,40 @@ class Server {
           maxRequestSize: this.maxRequestSize,
           securityHeaders: this.securityHeaders,
           rateLimit: this.rateLimit
-        });
+        })
 
         this.server.on('error', (error) => {
-          logger.error('Server error', { error: error.message, port });
-          reject(error);
-        });
+          logger.error('Server error', { error: error.message, port })
+          reject(error)
+        })
 
         this.server.listen(port, '0.0.0.0', () => {
-          logger.info('Server started successfully', { port });
-          if (callback) callback();
-          resolve();
-        });
-
+          logger.info('Server started successfully', { port })
+          if (callback) callback()
+          resolve()
+        })
       } catch (error) {
-        logger.error('Failed to start server', { error: error.message, port });
-        reject(error);
+        logger.error('Failed to start server', { error: error.message, port })
+        reject(error)
       }
-    });
+    })
   }
 
   /**
    * Stops the server
    * @returns {Promise<void>}
    */
-  close() {
+  close () {
     return new Promise((resolve) => {
       if (this.server) {
         this.server.close(() => {
-          logger.info('Server stopped successfully');
-          resolve();
-        });
+          logger.info('Server stopped successfully')
+          resolve()
+        })
       } else {
-        resolve();
+        resolve()
       }
-    });
+    })
   }
 }
 
@@ -412,18 +410,18 @@ class Hasty extends Server {
    * Creates a new Hasty server instance
    * @constructor
    */
-  constructor() {
-    super();
+  constructor () {
+    super()
 
     /** @private */
-    this.enableCors = false;
+    this.enableCors = false
 
     /** @private */
-    this.maxRequestSize = 10 * 1024 * 1024; // Default 10MB
+    this.maxRequestSize = 10 * 1024 * 1024 // Default 10MB
 
     // Bind methods
-    this.cors = this.cors.bind(this);
-    this.setMaxRequestSize = this.setMaxRequestSize.bind(this);
+    this.cors = this.cors.bind(this)
+    this.setMaxRequestSize = this.setMaxRequestSize.bind(this)
   }
 
   /**
@@ -431,9 +429,9 @@ class Hasty extends Server {
    * @param {boolean} [enabled=true] - Whether to enable CORS
    * @returns {Hasty} - The server instance for chaining
    */
-  cors(enabled = true) {
-    this.enableCors = enabled;
-    return this;
+  cors (enabled = true) {
+    this.enableCors = enabled
+    return this
   }
 
   /**
@@ -447,12 +445,12 @@ class Hasty extends Server {
    * // Set to 1MB
    * app.setMaxRequestSize(1024 * 1024);
    */
-  setMaxRequestSize(size) {
+  setMaxRequestSize (size) {
     if (typeof size !== 'number' || size <= 0) {
-      throw new Error('Max request size must be a positive number');
+      throw new Error('Max request size must be a positive number')
     }
-    this.maxRequestSize = size;
-    return this;
+    this.maxRequestSize = size
+    return this
   }
 
   /**
@@ -470,7 +468,7 @@ class Hasty extends Server {
    *   'X-XSS-Protection': '1; mode=block'
    * });
    */
-  setSecurityHeaders(config) {
+  setSecurityHeaders (config) {
     if (config === true) {
       // Default security headers
       this.securityHeaders = {
@@ -478,15 +476,15 @@ class Hasty extends Server {
         'X-Frame-Options': 'DENY',
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin'
-      };
+      }
     } else if (config === false) {
-      this.securityHeaders = null;
+      this.securityHeaders = null
     } else if (typeof config === 'object' && config !== null) {
-      this.securityHeaders = { ...config };
+      this.securityHeaders = { ...config }
     } else {
-      throw new Error('Security headers config must be boolean or object');
+      throw new Error('Security headers config must be boolean or object')
     }
-    return this;
+    return this
   }
 
   /**
@@ -504,7 +502,7 @@ class Hasty extends Server {
    *   message: 'Too many requests from this IP, please try again later.'
    * });
    */
-  setRateLimit(config) {
+  setRateLimit (config) {
     if (config === true) {
       // Default rate limiting: 100 requests per 15 minutes per IP
       this.rateLimit = {
@@ -512,20 +510,20 @@ class Hasty extends Server {
         maxRequests: 100,
         message: 'Too many requests from this IP, please try again later.',
         store: new Map() // In-memory store
-      };
+      }
     } else if (config === false) {
-      this.rateLimit = null;
+      this.rateLimit = null
     } else if (typeof config === 'object' && config !== null) {
       this.rateLimit = {
         windowMs: config.windowMs || 15 * 60 * 1000,
         maxRequests: config.maxRequests || 100,
         message: config.message || 'Too many requests from this IP, please try again later.',
         store: config.store || new Map()
-      };
+      }
     } else {
-      throw new Error('Rate limit config must be boolean or object');
+      throw new Error('Rate limit config must be boolean or object')
     }
-    return this;
+    return this
   }
 
   /**
@@ -536,15 +534,15 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  _registerRoute(method, path, callback) {
+  _registerRoute (method, path, callback) {
     // Normalize path - ensure it starts with a slash but don't modify parameter routes
-    let normalizedPath = path;
+    let normalizedPath = path
     if (!normalizedPath.startsWith('/')) {
-      normalizedPath = '/' + normalizedPath;
+      normalizedPath = '/' + normalizedPath
     }
     // Remove trailing slash unless it's the root path
     if (normalizedPath !== '/' && normalizedPath.endsWith('/')) {
-      normalizedPath = normalizedPath.slice(0, -1);
+      normalizedPath = normalizedPath.slice(0, -1)
     }
 
     this.routes.push({
@@ -552,11 +550,11 @@ class Hasty extends Server {
       path: normalizedPath,
       callback: async (req, res) => {
         try {
-          await callback(req, res);
+          await callback(req, res)
 
           // If headers haven't been sent and the response hasn't been ended
           if (!res.headersSent && !res.finished) {
-            res.end();
+            res.end()
           }
         } catch (error) {
           logger.error('Route handler error', {
@@ -566,17 +564,17 @@ class Hasty extends Server {
             path: req.path,
             ip: req.ip,
             requestId
-          });
+          })
           if (!res.headersSent) {
             res.status(500).json({
               error: 'Internal Server Error',
               message: 'An unexpected error occurred in route handler',
               requestId
-            });
+            })
           }
         }
       }
-    });
+    })
   }
 
   // HTTP method shortcuts
@@ -587,8 +585,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  get(path, callback) {
-    this._registerRoute('GET', path, callback);
+  get (path, callback) {
+    this._registerRoute('GET', path, callback)
   }
 
   /**
@@ -597,8 +595,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  post(path, callback) {
-    this._registerRoute('POST', path, callback);
+  post (path, callback) {
+    this._registerRoute('POST', path, callback)
   }
 
   /**
@@ -607,8 +605,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  put(path, callback) {
-    this._registerRoute('PUT', path, callback);
+  put (path, callback) {
+    this._registerRoute('PUT', path, callback)
   }
 
   /**
@@ -617,8 +615,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  delete(path, callback) {
-    this._registerRoute('DELETE', path, callback);
+  delete (path, callback) {
+    this._registerRoute('DELETE', path, callback)
   }
 
   /**
@@ -627,8 +625,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  patch(path, callback) {
-    this._registerRoute('PATCH', path, callback);
+  patch (path, callback) {
+    this._registerRoute('PATCH', path, callback)
   }
 
   /**
@@ -637,8 +635,8 @@ class Hasty extends Server {
    * @param {Function} callback - Route handler
    * @returns {void}
    */
-  head(path, callback) {
-    this._registerRoute('HEAD', path, callback);
+  head (path, callback) {
+    this._registerRoute('HEAD', path, callback)
   }
 
   /**
@@ -647,18 +645,18 @@ class Hasty extends Server {
    * @param {Function} [callback] - Optional route handler
    * @returns {void}
    */
-  options(path, callback) {
+  options (path, callback) {
     if (callback) {
-      this._registerRoute('OPTIONS', path, callback);
+      this._registerRoute('OPTIONS', path, callback)
     } else {
       // Auto-handle OPTIONS for CORS
       this._registerRoute('OPTIONS', path, (req, res) => {
         if (this.enableCors) {
-          handlePreflight(req, res);
+          handlePreflight(req, res)
         } else {
-          res.status(200).end();
+          res.status(200).end()
         }
-      });
+      })
     }
   }
 
@@ -669,25 +667,25 @@ class Hasty extends Server {
    * @param {string} [options.prefix='/'] - URL prefix for the static files
    * @returns {void}
    */
-  static(root, options = {}) {
-    const { prefix = '/' } = options;
-    const normalizedPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`;
+  static (root, options = {}) {
+    const { prefix = '/' } = options
+    const normalizedPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`
 
     this.get(`${normalizedPrefix}*`, (req, res) => {
       // Remove the prefix and any leading slashes to get the relative path
-      const relativePath = req.path.slice(normalizedPrefix.length).replace(/^\/+/, '');
+      const relativePath = req.path.slice(normalizedPrefix.length).replace(/^\/+/, '')
 
       // Prevent directory traversal
       if (relativePath.includes('../') || relativePath.includes('..\\')) {
-        return res.status(403).send('Forbidden');
+        return res.status(403).send('Forbidden')
       }
 
       // Join with the root directory and normalize the path
-      const filePath = path.join(root, relativePath || 'index.html');
+      const filePath = path.join(root, relativePath || 'index.html')
 
       // Send the file
-      res.sendFile(filePath);
-    });
+      res.sendFile(filePath)
+    })
   }
 }
 

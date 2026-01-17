@@ -8,26 +8,26 @@ const LOG_LEVELS = {
   WARN: 1,
   INFO: 2,
   DEBUG: 3
-};
+}
 
 const LOG_LEVEL_NAMES = {
   0: 'ERROR',
   1: 'WARN',
   2: 'INFO',
   3: 'DEBUG'
-};
+}
 
-let currentLogLevel = LOG_LEVELS.INFO; // Default to INFO level
-let logToConsole = true; // Default to console logging
+let currentLogLevel = LOG_LEVELS.INFO // Default to INFO level
+let logToConsole = true // Default to console logging
 
 /**
  * Set the current log level
  * @param {string} level - Log level (ERROR, WARN, INFO, DEBUG)
  */
-function setLogLevel(level) {
-  const upperLevel = level.toUpperCase();
+function setLogLevel (level) {
+  const upperLevel = level.toUpperCase()
   if (LOG_LEVELS[upperLevel] !== undefined) {
-    currentLogLevel = LOG_LEVELS[upperLevel];
+    currentLogLevel = LOG_LEVELS[upperLevel]
   }
 }
 
@@ -35,8 +35,8 @@ function setLogLevel(level) {
  * Enable or disable console logging
  * @param {boolean} enabled - Whether to log to console
  */
-function setConsoleLogging(enabled) {
-  logToConsole = enabled;
+function setConsoleLogging (enabled) {
+  logToConsole = enabled
 }
 
 /**
@@ -46,10 +46,10 @@ function setConsoleLogging(enabled) {
  * @param {Object} [meta] - Additional metadata
  * @returns {string} Formatted log message
  */
-function formatLogMessage(level, message, meta = {}) {
-  const timestamp = new Date().toISOString();
-  const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
-  return `[${timestamp}] ${level}: ${message}${metaStr}`;
+function formatLogMessage (level, message, meta = {}) {
+  const timestamp = new Date().toISOString()
+  const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : ''
+  return `[${timestamp}] ${level}: ${message}${metaStr}`
 }
 
 /**
@@ -58,16 +58,17 @@ function formatLogMessage(level, message, meta = {}) {
  * @param {string} message - Log message
  * @param {Object} [meta] - Additional metadata
  */
-function log(level, message, meta = {}) {
-  if (level > currentLogLevel) return;
+function log (level, message, meta = {}) {
+  if (level > currentLogLevel) return
 
-  const levelName = LOG_LEVEL_NAMES[level];
-  const formattedMessage = formatLogMessage(levelName, message, meta);
+  const levelName = LOG_LEVEL_NAMES[level]
+  const formattedMessage = formatLogMessage(levelName, message, meta)
 
   if (logToConsole) {
-    const consoleMethod = level === LOG_LEVELS.ERROR ? 'error' :
-                         level === LOG_LEVELS.WARN ? 'warn' : 'log';
-    console[consoleMethod](formattedMessage);
+    const consoleMethod = level === LOG_LEVELS.ERROR
+      ? 'error'
+      : level === LOG_LEVELS.WARN ? 'warn' : 'log'
+    console[consoleMethod](formattedMessage)
   }
 
   // Future: Could add file logging, external service logging, etc.
@@ -78,8 +79,8 @@ function log(level, message, meta = {}) {
  * @param {string} message - Error message
  * @param {Object} [meta] - Additional metadata
  */
-function error(message, meta = {}) {
-  log(LOG_LEVELS.ERROR, message, meta);
+function error (message, meta = {}) {
+  log(LOG_LEVELS.ERROR, message, meta)
 }
 
 /**
@@ -87,8 +88,8 @@ function error(message, meta = {}) {
  * @param {string} message - Warning message
  * @param {Object} [meta] - Additional metadata
  */
-function warn(message, meta = {}) {
-  log(LOG_LEVELS.WARN, message, meta);
+function warn (message, meta = {}) {
+  log(LOG_LEVELS.WARN, message, meta)
 }
 
 /**
@@ -96,8 +97,8 @@ function warn(message, meta = {}) {
  * @param {string} message - Info message
  * @param {Object} [meta] - Additional metadata
  */
-function info(message, meta = {}) {
-  log(LOG_LEVELS.INFO, message, meta);
+function info (message, meta = {}) {
+  log(LOG_LEVELS.INFO, message, meta)
 }
 
 /**
@@ -105,8 +106,8 @@ function info(message, meta = {}) {
  * @param {string} message - Debug message
  * @param {Object} [meta] - Additional metadata
  */
-function debug(message, meta = {}) {
-  log(LOG_LEVELS.DEBUG, message, meta);
+function debug (message, meta = {}) {
+  log(LOG_LEVELS.DEBUG, message, meta)
 }
 
 module.exports = {
@@ -117,4 +118,4 @@ module.exports = {
   info,
   debug,
   LOG_LEVELS
-};
+}

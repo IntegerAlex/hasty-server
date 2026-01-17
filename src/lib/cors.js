@@ -14,9 +14,9 @@ const DEFAULT_CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Max-Age': '86400', // 24 hours
+  'Access-Control-Max-Age': '86400' // 24 hours
   // Removed 'Access-Control-Allow-Credentials': 'true' - incompatible with '*' origin
-};
+}
 
 /**
  * Applies CORS headers to a response
@@ -25,23 +25,23 @@ const DEFAULT_CORS_HEADERS = {
  * @param {Object} [customHeaders] - Custom CORS headers to merge with defaults
  * @returns {void}
  */
-function applyCorsHeaders(response, enabled = true, customHeaders = {}) {
-  if (!enabled) return;
+function applyCorsHeaders (response, enabled = true, customHeaders = {}) {
+  if (!enabled) return
 
-  const headers = { ...DEFAULT_CORS_HEADERS, ...customHeaders };
+  const headers = { ...DEFAULT_CORS_HEADERS, ...customHeaders }
 
   // Validate CORS configuration to prevent common mistakes
   if (headers['Access-Control-Allow-Origin'] === '*' &&
       headers['Access-Control-Allow-Credentials'] === 'true') {
-    throw new Error('CORS configuration error: Cannot use credentials with wildcard origin (*). Either specify allowed origins or disable credentials.');
+    throw new Error('CORS configuration error: Cannot use credentials with wildcard origin (*). Either specify allowed origins or disable credentials.')
   }
 
   Object.entries(headers).forEach(([key, value]) => {
     // Only set if explicitly provided in customHeaders or if not already set
     if (customHeaders[key] || !response.headers[key]) {
-      response.setHeader(key, value);
+      response.setHeader(key, value)
     }
-  });
+  })
 }
 
 /**
@@ -51,9 +51,9 @@ function applyCorsHeaders(response, enabled = true, customHeaders = {}) {
  * @param {boolean} [enabled=true] - Whether CORS is enabled
  * @returns {boolean} - True if this was a preflight request that was handled
  */
-function handlePreflight(request, response, enabled = true) {
+function handlePreflight (request, response, enabled = true) {
   if (!enabled || request.method !== 'OPTIONS') {
-    return false;
+    return false
   }
 
   applyCorsHeaders(response, true, {
@@ -61,14 +61,14 @@ function handlePreflight(request, response, enabled = true) {
       DEFAULT_CORS_HEADERS['Access-Control-Allow-Methods'],
     'Access-Control-Allow-Headers': request.headers['access-control-request-headers'] ||
       DEFAULT_CORS_HEADERS['Access-Control-Allow-Headers']
-  });
+  })
 
-  response.status(204).send('');
-  return true;
+  response.status(204).send('')
+  return true
 }
 
 module.exports = {
   applyCorsHeaders,
   handlePreflight,
   DEFAULT_CORS_HEADERS
-};
+}
