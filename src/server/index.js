@@ -2,8 +2,10 @@ const { httpParser } = require('../lib/httpParser.js');
 const net = require('net');
 const path = require('path');
 const { URL } = require('url');
+const crypto = require('crypto');
 const Response = require('./response.js');
 const { handlePreflight } = require('../lib/cors');
+const logger = require('../lib/logger');
 
 /**
  * @typedef {Object} Route
@@ -26,7 +28,7 @@ function createServer(callback, context) {
 
     // Handle connection errors
     socket.on('error', (error) => {
-      console.error('Socket error:', error);
+      logger.error('Socket error', { error: error.message, stack: error.stack });
       if (!socket.destroyed) {
         socket.destroy();
       }
@@ -34,7 +36,7 @@ function createServer(callback, context) {
 
     // Handle timeout
     socket.on('timeout', () => {
-      console.warn('Socket timeout');
+      logger.warn('Socket timeout - closing connection');
       socket.end('HTTP/1.1 408 Request Timeout\r\n\r\n');
     });
 
@@ -54,9 +56,26 @@ function createServer(callback, context) {
  */
 function handleConnection(socket, context) {
   let buffer = Buffer.alloc(0);
+  const maxRequestSize = context.maxRequestSize || 10 * 1024 * 1024; // Default 10MB
+  const securityHeaders = context.securityHeaders;
+  const rateLimit = context.rateLimit;
 
   socket.on('data', (chunk) => {
     buffer = Buffer.concat([buffer, chunk]);
+
+      // Check if buffer exceeds maximum request size
+    if (buffer.length > maxRequestSize) {
+      logger.warn('Request size exceeds maximum allowed size', {
+        size: buffer.length,
+        maxSize: maxRequestSize
+      });
+      if (socket.writable) {
+        const res = new Response(socket, context.enableCors);
+        res.status(413).send('Payload Too Large');
+      }
+      socket.destroy();
+      return;
+    }
 
     // Process as many requests as possible from the buffer
     while (buffer.length > 0) {
@@ -112,15 +131,29 @@ function handleConnection(socket, context) {
  * @returns {Promise<void>}
  */
 async function processRequest(socket, requestData, context) {
-  // Parse the HTTP request first to check headers
+    // Parse the HTTP request first to check headers
   let req;
+  // Generate unique request ID for tracing
+  const requestId = crypto.randomUUID();
+
   try {
     req = await httpParser(requestData.toString());
+    req.id = requestId; // Add request ID to request object
   } catch (error) {
-    console.error('Request parsing error:', error);
+    logger.error('Request parsing error', {
+      error: error.message,
+      stack: error.stack,
+      requestDataLength: requestData.length,
+      requestId
+    });
     if (socket.writable) {
       const res = new Response(socket, context.enableCors);
-      res.status(400).send('Bad Request');
+      res.setHeader('X-Request-ID', requestId);
+      res.status(400).json({
+        error: 'Bad Request',
+        message: 'Invalid request format',
+        requestId
+      });
     }
     return;
   }
@@ -139,6 +172,47 @@ async function processRequest(socket, requestData, context) {
 
   const res = new Response(socket, context.enableCors, shouldKeepAlive, req.method);
 
+  // Add request ID to response headers for tracing
+  res.setHeader('X-Request-ID', requestId);
+
+  // Apply security headers if configured
+  if (securityHeaders) {
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      res.setHeader(key, value);
+    });
+  }
+
+  // Check rate limiting if configured
+  if (rateLimit) {
+    const clientIP = req.ip || 'unknown';
+    const now = Date.now();
+    const windowStart = now - rateLimit.windowMs;
+
+    // Get or create client record
+    if (!rateLimit.store.has(clientIP)) {
+      rateLimit.store.set(clientIP, []);
+    }
+
+    const clientRequests = rateLimit.store.get(clientIP);
+
+    // Remove old requests outside the window
+    const validRequests = clientRequests.filter(timestamp => timestamp > windowStart);
+
+    if (validRequests.length >= rateLimit.maxRequests) {
+      logger.warn('Rate limit exceeded', {
+        ip: clientIP,
+        requests: validRequests.length,
+        maxRequests: rateLimit.maxRequests
+      });
+      res.status(429).setHeader('Retry-After', Math.ceil(rateLimit.windowMs / 1000)).send(rateLimit.message);
+      return;
+    }
+
+    // Add current request timestamp
+    validRequests.push(now);
+    rateLimit.store.set(clientIP, validRequests);
+  }
+
   try {
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS' && context.enableCors) {
@@ -150,7 +224,17 @@ async function processRequest(socket, requestData, context) {
     const route = findMatchingRoute(req.method, req.path, context.routes);
 
     if (!route) {
-      res.status(404).send('Not Found');
+      logger.info('Route not found', {
+        method: req.method,
+        path: req.path,
+        ip: req.ip,
+        requestId
+      });
+      res.status(404).json({
+        error: 'Not Found',
+        message: `Route ${req.method} ${req.path} not found`,
+        requestId
+      });
       return;
     }
 
@@ -169,9 +253,20 @@ async function processRequest(socket, requestData, context) {
     await route.callback(req, res);
 
   } catch (error) {
-    console.error('Request processing error:', error);
+    logger.error('Request processing error', {
+      error: error.message,
+      stack: error.stack,
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+      requestId
+    });
     if (!res.headersSent) {
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'An unexpected error occurred',
+        requestId
+      });
     }
   }
 }
@@ -266,22 +361,25 @@ class Server {
       try {
         this.server = createServer(handleConnection, {
           routes: this.routes,
-          enableCors: this.enableCors || false
+          enableCors: this.enableCors || false,
+          maxRequestSize: this.maxRequestSize,
+          securityHeaders: this.securityHeaders,
+          rateLimit: this.rateLimit
         });
 
         this.server.on('error', (error) => {
-          console.error('Server error:', error);
+          logger.error('Server error', { error: error.message, port });
           reject(error);
         });
 
         this.server.listen(port, '0.0.0.0', () => {
-          console.log(`Server listening on port ${port}`);
+          logger.info('Server started successfully', { port });
           if (callback) callback();
           resolve();
         });
 
       } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start server', { error: error.message, port });
         reject(error);
       }
     });
@@ -295,7 +393,7 @@ class Server {
     return new Promise((resolve) => {
       if (this.server) {
         this.server.close(() => {
-          console.log('Server stopped');
+          logger.info('Server stopped successfully');
           resolve();
         });
       } else {
@@ -320,8 +418,12 @@ class Hasty extends Server {
     /** @private */
     this.enableCors = false;
 
+    /** @private */
+    this.maxRequestSize = 10 * 1024 * 1024; // Default 10MB
+
     // Bind methods
     this.cors = this.cors.bind(this);
+    this.setMaxRequestSize = this.setMaxRequestSize.bind(this);
   }
 
   /**
@@ -331,6 +433,98 @@ class Hasty extends Server {
    */
   cors(enabled = true) {
     this.enableCors = enabled;
+    return this;
+  }
+
+  /**
+   * Sets the maximum request size in bytes
+   * @param {number} size - Maximum request size in bytes
+   * @returns {Hasty} - The server instance for chaining
+   * @example
+   * // Set to 5MB
+   * app.setMaxRequestSize(5 * 1024 * 1024);
+   *
+   * // Set to 1MB
+   * app.setMaxRequestSize(1024 * 1024);
+   */
+  setMaxRequestSize(size) {
+    if (typeof size !== 'number' || size <= 0) {
+      throw new Error('Max request size must be a positive number');
+    }
+    this.maxRequestSize = size;
+    return this;
+  }
+
+  /**
+   * Enables or configures security headers for all responses
+   * @param {boolean|Object} config - Security headers configuration
+   * @returns {Hasty} - The server instance for chaining
+   * @example
+   * // Enable default security headers
+   * app.setSecurityHeaders(true);
+   *
+   * // Custom security headers
+   * app.setSecurityHeaders({
+   *   'X-Content-Type-Options': 'nosniff',
+   *   'X-Frame-Options': 'DENY',
+   *   'X-XSS-Protection': '1; mode=block'
+   * });
+   */
+  setSecurityHeaders(config) {
+    if (config === true) {
+      // Default security headers
+      this.securityHeaders = {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      };
+    } else if (config === false) {
+      this.securityHeaders = null;
+    } else if (typeof config === 'object' && config !== null) {
+      this.securityHeaders = { ...config };
+    } else {
+      throw new Error('Security headers config must be boolean or object');
+    }
+    return this;
+  }
+
+  /**
+   * Enables or configures rate limiting
+   * @param {boolean|Object} config - Rate limiting configuration
+   * @returns {Hasty} - The server instance for chaining
+   * @example
+   * // Enable default rate limiting (100 requests per 15 minutes per IP)
+   * app.setRateLimit(true);
+   *
+   * // Custom rate limiting
+   * app.setRateLimit({
+   *   windowMs: 15 * 60 * 1000, // 15 minutes
+   *   maxRequests: 100, // limit each IP to 100 requests per windowMs
+   *   message: 'Too many requests from this IP, please try again later.'
+   * });
+   */
+  setRateLimit(config) {
+    if (config === true) {
+      // Default rate limiting: 100 requests per 15 minutes per IP
+      this.rateLimit = {
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        maxRequests: 100,
+        message: 'Too many requests from this IP, please try again later.',
+        store: new Map() // In-memory store
+      };
+    } else if (config === false) {
+      this.rateLimit = null;
+    } else if (typeof config === 'object' && config !== null) {
+      this.rateLimit = {
+        windowMs: config.windowMs || 15 * 60 * 1000,
+        maxRequests: config.maxRequests || 100,
+        message: config.message || 'Too many requests from this IP, please try again later.',
+        store: config.store || new Map()
+      };
+    } else {
+      throw new Error('Rate limit config must be boolean or object');
+    }
     return this;
   }
 
@@ -365,9 +559,20 @@ class Hasty extends Server {
             res.end();
           }
         } catch (error) {
-          console.error('Route handler error:', error);
+          logger.error('Route handler error', {
+            error: error.message,
+            stack: error.stack,
+            method: req.method,
+            path: req.path,
+            ip: req.ip,
+            requestId
+          });
           if (!res.headersSent) {
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({
+              error: 'Internal Server Error',
+              message: 'An unexpected error occurred in route handler',
+              requestId
+            });
           }
         }
       }

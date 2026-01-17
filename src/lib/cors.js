@@ -7,7 +7,7 @@
  */
 
 /**
- * Default CORS headers
+ * Default CORS headers (secure by default - no credentials with wildcard origin)
  * @type {CorsHeaders}
  */
 const DEFAULT_CORS_HEADERS = {
@@ -15,7 +15,7 @@ const DEFAULT_CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Max-Age': '86400', // 24 hours
-  'Access-Control-Allow-Credentials': 'true'
+  // Removed 'Access-Control-Allow-Credentials': 'true' - incompatible with '*' origin
 };
 
 /**
@@ -29,6 +29,12 @@ function applyCorsHeaders(response, enabled = true, customHeaders = {}) {
   if (!enabled) return;
 
   const headers = { ...DEFAULT_CORS_HEADERS, ...customHeaders };
+
+  // Validate CORS configuration to prevent common mistakes
+  if (headers['Access-Control-Allow-Origin'] === '*' &&
+      headers['Access-Control-Allow-Credentials'] === 'true') {
+    throw new Error('CORS configuration error: Cannot use credentials with wildcard origin (*). Either specify allowed origins or disable credentials.');
+  }
 
   Object.entries(headers).forEach(([key, value]) => {
     // Only set if explicitly provided in customHeaders or if not already set

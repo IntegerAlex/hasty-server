@@ -6,8 +6,7 @@
  
 **Help needed**: I am looking for contributors to help me with this project. If you are interested, please let me know.
 
-Hasty server is a simple web framework to build webserver  in a simple way. It is inspired by [Express.js](https://expressjs.com/).
-Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
+Hasty Server is a lightweight, zero-dependency HTTP framework built with raw TCP sockets in Node.js. Inspired by Express.js, it provides a clean API for building web servers and APIs while teaching HTTP internals.
 
 ###  table of contents
 - [Installation](#installation)
@@ -19,16 +18,36 @@ Bascially, It is my implementation of HTTP using raw TCP Socket in Javascript.
 - [LICENSE](LICENSE.md)
 
 
-### Note
+### Framework Status
 
-This project has been upgraded to be **Production Ready**. It supports:
--   **Robust Body Parsing**: Handles fragmented packets and large payloads.
--   **HTTP Keep-Alive**: Persistent connections for high performance.
--   **CORS Support**: Full CORS handling including preflight and credentials.
--   **HTTP 1.1 Compliance**: Fully compliant with GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS.
--   **Battle Tested**: Verified against edge cases, slowloris attacks, and protocol abuse.
+Hasty Server is a **production-ready HTTP framework** designed for building web APIs and applications. It provides enterprise-grade security features while maintaining zero dependencies.
 
-It is a great tool to learn how HTTP works under the hood while being robust enough for real-world API usage.
+**What Hasty Server provides:**
+- ✅ **HTTP/1.1 compliant** server with proper request/response handling
+- ✅ **Security features**: Configurable security headers, rate limiting, request size limits, CORS security
+- ✅ **Request tracing**: Unique request IDs for debugging and monitoring
+- ✅ **Structured logging**: Production-ready logging system
+- ✅ **Error handling**: Consistent JSON error responses
+- ✅ **Static file serving** with security protections
+- ✅ **Zero dependencies**: Pure Node.js implementation
+
+**What you need to add:**
+- 🔧 **Input validation**: Use Zod, Joi, Yup, or your preferred validation library
+- 🔐 **Authentication**: Implement JWT, sessions, or OAuth as needed
+- 💾 **Database**: Add MongoDB, PostgreSQL, or your preferred database
+- 🚀 **External services**: Redis for caching, reverse proxy for HTTPS
+- 📊 **Monitoring**: Add health checks, metrics, and alerting
+
+**Perfect for:**
+- Learning HTTP internals and server architecture
+- Building APIs with your preferred tools and libraries
+- Zero-dependency deployments
+- Custom server implementations
+
+**Not suitable for:**
+- Applications requiring middleware systems (Express-style `app.use()`)
+- Complex routing with nested middleware
+- Built-in authentication or database integration
 
 ### Installation
 ```bash
@@ -56,11 +75,15 @@ const server = new Hasty();
 #### ✅ TypeScript
 
 ```typescript
-import Hasty, { Request, Response } from 'hasty-server';
+import Hasty from 'hasty-server';
 
-const server = new Hasty();
+const app = new Hasty();
 
-server.get('/', (req: Request, res: Response) => {
+// Enable security features
+app.setSecurityHeaders(true);
+app.setRateLimit(true);
+
+app.get('/', (req, res) => {
     res.json({ message: 'Hello from TypeScript!' });
 });
 ```
@@ -75,86 +98,132 @@ The framework automatically detects your module system and provides the appropri
 
 ### Usage  
 
-**Common JS**
-
-```Javascript
+```javascript
 const Hasty = require('hasty-server');
-const  server = new  Hasty();
+const app = new Hasty();
 
-server.get('/', (req, res) => {
-    res.send('Hello World');
+// Enable production-ready security features
+app.setSecurityHeaders(true);        // XSS, CSRF, clickjacking protection
+app.setRateLimit(true);             // Rate limiting (100 req/15min per IP)
+app.setMaxRequestSize(5 * 1024 * 1024); // 5MB request size limit
+
+// Basic routes
+app.get('/', (req, res) => {
+    res.json({ message: 'Hello World', timestamp: new Date().toISOString() });
 });
 
-server.listen(8080, () => {
-    console.log('Server is running on port 8080');
+app.post('/api/users', (req, res) => {
+    // Add your validation logic here (Zod, Joi, etc.)
+    // Add your database logic here
+    res.status(201).json({ id: 1, created: true });
+});
+
+app.listen(3000, () => {
+    console.log('🚀 Server running on http://localhost:3000');
 });
 ```
+
+### API Reference
+
+#### Server Methods
+
+- `app.get(path, handler)` - Handle GET requests
+- `app.post(path, handler)` - Handle POST requests
+- `app.put(path, handler)` - Handle PUT requests
+- `app.delete(path, handler)` - Handle DELETE requests
+- `app.patch(path, handler)` - Handle PATCH requests
+- `app.head(path, handler)` - Handle HEAD requests
+- `app.options(path, handler)` - Handle OPTIONS requests
+
+#### Security & Configuration
+
+- `app.setSecurityHeaders(config)` - Enable security headers
+- `app.setRateLimit(config)` - Configure rate limiting
+- `app.setMaxRequestSize(bytes)` - Set maximum request size
+- `app.cors(enabled)` - Enable/disable CORS
+
+#### Response Methods
+
+- `res.send(data)` - Send response data
+- `res.json(data)` - Send JSON response
+- `res.status(code)` - Set HTTP status code
+- `res.setHeader(key, value)` - Set response header
+- `res.sendFile(path)` - Send file as response
+
+#### Request Object
+
+- `req.method` - HTTP method (GET, POST, etc.)
+- `req.path` - Request path
+- `req.query` - Parsed query parameters
+- `req.params` - URL parameters
+- `req.body` - Parsed request body
+- `req.headers` - Request headers
+- `req.ip` - Client IP address
+- `req.id` - Unique request ID for tracing
     
-**ES6**
+### Production Deployment
 
-```Javascript
-import Hasty from 'hasty-server';
-const  server = new  Hasty();
+For production deployment, consider these best practices:
 
-server.get('/', (req, res) => {
-    res.send('Hello World');
+```javascript
+const Hasty = require('hasty-server');
+const app = new Hasty();
+
+// Security first
+app.setSecurityHeaders(true);
+app.setRateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 100
+});
+app.setMaxRequestSize(10 * 1024 * 1024); // 10MB
+
+// Add your routes and business logic
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: Date.now() });
 });
 
-server.listen(8080, () => {
-    console.log('Server is running on port 8080');
-});
+// Deploy behind reverse proxy (nginx/traefik) for HTTPS
+app.listen(process.env.PORT || 3000);
 ```
 
-**TypeScript**
-
-```typescript
-import Hasty, { Request, Response } from 'hasty-server';
-
-const server = new Hasty();
-
-server.get('/', (req: Request, res: Response) => {
-    res.json({ message: 'Hello from TypeScript!' });
-});
-
-server.post('/api/users', (req: Request, res: Response) => {
-    const userData = req.body;
-    res.status(201).json({ id: 1, ...userData });
-});
-
-server.listen(8080, () => {
-    console.log('TypeScript server running on port 8080');
-});
-```
-
-### Request Object
-
-Some of the features in  `response object` are:
-
-- `send` : Send a response to the client.
-    - Usage: `res.send('Hello World')`
-
-- `json` : Send a JSON response to the client.
-    - Usage: `res.json({message: 'Hello World'})`
-
-- `status` : Set the status code of the response.
-    - Usage: `res.status(200)`
-    - Default status code is 200.
-    
 ### Contributing
 
-If you would like to contribute to Hasty Server, you're welcome to:
+We welcome contributions! Please:
 
- - Fork the repository.
- - Create a branch for your feature or bugfix.
- - Submit a pull request.
- - Please make sure to read the [contribution guidelines](CONTRIBUTING.md) for more details.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-Note: Do not use third-party code or dependencies. You can take help from language models, but avoid directly copying any of their code.
+**Important:** This project maintains zero dependencies. All code must be pure Node.js.
 
-### CHANGELOG
- -  v0.9.6 
-    - Added comprehensive module support (CommonJS, ESM, TypeScript)
-    - Added dual package support with automatic module detection
+### Limitations
+
+Hasty Server is designed as a lightweight HTTP framework. It does **not** include:
+
+- Middleware system (`app.use()`)
+- Built-in authentication
+- Built-in database integration
+- Built-in input validation
+- Built-in session management
+
+For these features, integrate your preferred libraries (Zod for validation, JWT for auth, etc.).
+
+### Changelog
+
+- **v1.0.0** - Production Ready Release
+  - Added configurable security headers
+  - Implemented rate limiting
+  - Added request tracing with unique IDs
+  - Fixed CORS credentials bug
+  - Improved error handling consistency
+  - Replaced console logging with structured logging
+  - Added request size limits
+
+- **v0.9.6**
+  - Added comprehensive module support (CommonJS, ESM, TypeScript)
+  - Added dual package support with automatic module detection
 
 
 For more information, see .
